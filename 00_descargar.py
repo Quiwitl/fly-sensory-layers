@@ -12,6 +12,10 @@ Baja:
     clase de cada neurona (Schlegel et al. 2024).
   - rangos_publicados/*.feather (Zenodo 12588557, ~25 MB, CC BY 4.0): capas medias
     publicadas por Dorkenwald et al. 2024 (10,000 corridas por modalidad), para validar.
+  - banc/ (Harvard Dataverse 10.7910/DVN/7WTH1N, v888, CC BY 4.0; ~350 MB):
+    banc_888_edgelist_simple_v2.feather (pares pre -> post sin umbral; la versión que usa
+    el artículo del BANC) y banc_888_meta.feather (anotaciones, con correspondencias a FlyWire v783).
+    Opcional: uv run 00_descargar.py --sin-banc
 
 Zenodo limita la velocidad por conexión, así que el archivo grande se baja en
 partes en paralelo (peticiones con Range) y al final se verifica el MD5.
@@ -20,6 +24,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import hashlib
 import json
+import shutil
 import socket
 import sys
 import time
@@ -32,6 +37,10 @@ ANOTACIONES = ("https://raw.githubusercontent.com/flyconnectome/flywire_annotati
                "main/supplemental_files/Supplemental_file1_neuron_annotations.tsv")
 PARTES = 24
 socket.setdefaulttimeout(60)  # Zenodo a veces deja la conexión abierta sin mandar nada
+# Dataverse rechaza (403) el User-Agent por defecto de urllib; se usa uno propio en todas las descargas
+_opener = urllib.request.build_opener()
+_opener.addheaders = [("User-Agent", "fly-sensory-layers/0.1 (+https://github.com/Quiwitl/fly-sensory-layers)")]
+urllib.request.install_opener(_opener)
 
 
 def info_zenodo(nombre):
@@ -126,6 +135,35 @@ def bajar_rangos():
     print(f"rangos_publicados: {len(archivos)} archivos")
 
 
+BANC_DOI = "doi:10.7910/DVN/7WTH1N"
+BANC_ARCHIVOS = ["banc_888_edgelist_simple_v2.feather", "banc_888_meta.feather"]
+
+
+def bajar_banc():
+    """Conexiones y anotaciones del BANC v888 desde Harvard Dataverse."""
+    destino = DATOS / "banc"
+    destino.mkdir(exist_ok=True)
+    url = f"https://dataverse.harvard.edu/api/datasets/:persistentId/?persistentId={BANC_DOI}"
+    with urllib.request.urlopen(url, timeout=60) as r:
+        archivos = {f["dataFile"]["filename"]: f["dataFile"] for f in json.load(r)["data"]["latestVersion"]["files"]}
+    for nombre in BANC_ARCHIVOS:
+        f = archivos[nombre]
+        ruta, suma = destino / nombre, f.get("md5") or f.get("checksum", {}).get("value")
+        for intento in range(5):
+            if ruta.exists() and ruta.stat().st_size == f["filesize"] and (not suma or md5(ruta) == suma):
+                break
+            try:
+                with urllib.request.urlopen(f"https://dataverse.harvard.edu/api/access/datafile/{f['id']}",
+                                            timeout=120) as r, open(ruta, "wb") as out:
+                    shutil.copyfileobj(r, out, 1 << 20)
+            except OSError as e:
+                print(f"  reintento {intento + 1} de {nombre}: {e}", flush=True)
+                time.sleep(5 * (intento + 1))
+        else:
+            sys.exit(f"No se pudo bajar bien {nombre}")
+        print(f"banc/{nombre}: {f['filesize'] / 2**20:,.0f} MB, MD5 verificado", flush=True)
+
+
 def main():
     DATOS.mkdir(exist_ok=True)
     bajar_zenodo("proofread_connections_783.feather")
@@ -134,6 +172,8 @@ def main():
         urllib.request.urlretrieve(ANOTACIONES, destino)
     print(f"neuron_annotations.tsv: {destino.stat().st_size / 2**20:.1f} MB")
     bajar_rangos()
+    if "--sin-banc" not in sys.argv:
+        bajar_banc()
 
 
 if __name__ == "__main__":

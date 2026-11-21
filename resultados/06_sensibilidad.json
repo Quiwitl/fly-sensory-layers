@@ -1,0 +1,45 @@
+{
+  "criterio": "PLAN.md, P4: sin hipótesis; mediana y rango del Spearman por modalidad",
+  "umbral": {
+    "que": "5 sinapsis contra 1 (tope 15)",
+    "a": "_completo_p15_gpu",
+    "b": "_completo_p15_u1_gpu",
+    "modalidades": 12,
+    "spearman_mediana": 0.8801,
+    "spearman_min": 0.8369,
+    "spearman_max": 0.958,
+    "modalidad_min": "ocelos",
+    "dif_media_rango": [
+      -1.246,
+      -0.068
+    ]
+  },
+  "tope": {
+    "que": "15 pasos contra 30 (sin umbral)",
+    "a": "_completo_p15_u1_gpu",
+    "b": "_completo_u1_gpu",
+    "modalidades": 12,
+    "spearman_mediana": 0.9985,
+    "spearman_min": 0.9975,
+    "spearman_max": 0.9998,
+    "modalidad_min": "johnston",
+    "dif_media_rango": [
+      -0.004,
+      0.02
+    ]
+  },
+  "ruido": {
+    "que": "misma configuración, CPU contra GPU",
+    "a": "_completo_p15_u1",
+    "b": "_completo_p15_u1_gpu",
+    "modalidades": 12,
+    "spearman_mediana": 0.9971,
+    "spearman_min": 0.9955,
+    "spearman_max": 0.9997,
+    "modalidad_min": "taste_peg",
+    "dif_media_rango": [
+      -0.017,
+      0.007
+    ]
+  }
+}

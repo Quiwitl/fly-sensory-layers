@@ -1,0 +1,104 @@
+{
+ "regla": "arista",
+ "umbral_p": 0.3,
+ "umbral_sinapsis": 1,
+ "neuronas": 139248,
+ "conexiones": 15090883,
+ "alcance": "completo",
+ "max_pasos": 15,
+ "modalidades": {
+  "olfativas": {
+   "semillas": 2282,
+   "corridas": 2500,
+   "cambio_final_p99": 0.0098,
+   "alcanzadas_siempre": 136161,
+   "segundos": 36.2
+  },
+  "gustativas": {
+   "semillas": 410,
+   "corridas": 2700,
+   "cambio_final_p99": 0.0092,
+   "alcanzadas_siempre": 136149,
+   "segundos": 38.8
+  },
+  "johnston": {
+   "semillas": 874,
+   "corridas": 2600,
+   "cambio_final_p99": 0.0092,
+   "alcanzadas_siempre": 136289,
+   "segundos": 37.4
+  },
+  "cerdas_cabeza": {
+   "semillas": 305,
+   "corridas": 2600,
+   "cambio_final_p99": 0.01,
+   "alcanzadas_siempre": 136230,
+   "segundos": 37.4
+  },
+  "cerdas_ojo": {
+   "semillas": 1112,
+   "corridas": 2600,
+   "cambio_final_p99": 0.0099,
+   "alcanzadas_siempre": 136192,
+   "segundos": 37.4
+  },
+  "taste_peg": {
+   "semillas": 75,
+   "corridas": 2600,
+   "cambio_final_p99": 0.0099,
+   "alcanzadas_siempre": 135959,
+   "segundos": 37.5
+  },
+  "termosensoriales": {
+   "semillas": 29,
+   "corridas": 2500,
+   "cambio_final_p99": 0.0099,
+   "alcanzadas_siempre": 136077,
+   "segundos": 36.0
+  },
+  "higrosensoriales": {
+   "semillas": 74,
+   "corridas": 2500,
+   "cambio_final_p99": 0.0099,
+   "alcanzadas_siempre": 136090,
+   "segundos": 35.9
+  },
+  "proyeccion_visual": {
+   "semillas": 8038,
+   "corridas": 2300,
+   "cambio_final_p99": 0.0096,
+   "alcanzadas_siempre": 136463,
+   "segundos": 33.1
+  },
+  "fotorreceptores": {
+   "semillas": 11118,
+   "corridas": 2300,
+   "cambio_final_p99": 0.0094,
+   "alcanzadas_siempre": 139039,
+   "segundos": 33.1
+  },
+  "ocelos": {
+   "semillas": 273,
+   "corridas": 2800,
+   "cambio_final_p99": 0.0095,
+   "alcanzadas_siempre": 136084,
+   "segundos": 40.3
+  },
+  "ascendentes": {
+   "semillas": 2276,
+   "corridas": 2400,
+   "cambio_final_p99": 0.0095,
+   "alcanzadas_siempre": 136567,
+   "segundos": 34.5
+  },
+  "todas": {
+   "semillas": 27300,
+   "corridas": 1900,
+   "cambio_final_p99": 0.0097,
+   "alcanzadas_siempre": 139206,
+   "segundos": 27.3
+  }
+ },
+ "gpu": true,
+ "segundos_total": 478.2
+}

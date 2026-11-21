@@ -1,0 +1,73 @@
+{
+ "modo": "h3",
+ "region_h2": null,
+ "max_pasos": 30,
+ "tope_corto": 15,
+ "neuronas": 146769,
+ "conexiones": 10650723,
+ "azar": 0,
+ "procesos": 4,
+ "lote": 100,
+ "meta_filas": 188508,
+ "quitadas_no_neurona_o_sin_clase": 41739,
+ "pares_archivo": 11752828,
+ "pares_dentro": 10650723,
+ "blancos": {
+  "MN_T1": 139,
+  "MN_T2": 126,
+  "MN_T3": 126,
+  "MN_ala": 64
+ },
+ "modalidades": {
+  "olfativas": {
+   "semillas": 3007,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0272,
+   "alcanzadas_siempre": 144389,
+   "segundos": 668.6
+  },
+  "gustativas": {
+   "semillas": 380,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0281,
+   "alcanzadas_siempre": 144358,
+   "segundos": 665.2
+  },
+  "johnston": {
+   "semillas": 1193,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0376,
+   "alcanzadas_siempre": 144425,
+   "segundos": 667.5
+  },
+  "proyeccion_visual": {
+   "semillas": 7316,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0246,
+   "alcanzadas_siempre": 144443,
+   "segundos": 668.8
+  },
+  "mecano_T1": {
+   "semillas": 1322,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0297,
+   "alcanzadas_siempre": 144361,
+   "segundos": 598.8
+  },
+  "mecano_T2": {
+   "semillas": 1302,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0266,
+   "alcanzadas_siempre": 144364,
+   "segundos": 599.1
+  },
+  "mecano_T3": {
+   "semillas": 1539,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.026,
+   "alcanzadas_siempre": 144354,
+   "segundos": 599.0
+  }
+ },
+ "segundos_total": 1272.8
+}

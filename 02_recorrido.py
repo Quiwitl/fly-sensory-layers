@@ -5,7 +5,9 @@
 """Fase 1: modelo de recorrido probabilístico (Schlegel et al. 2021) en el cerebro central de FlyWire v783.
 
 Uso:  uv run 02_recorrido.py [--max-corridas 10000] [--lote 100] [--regla arista|neurona] [--solo olfativas] [--procesos N]
-      [--alcance central|completo] [--max-pasos 15]
+      [--alcance central|completo] [--max-pasos 15] [--gpu] [--etiqueta _x]
+      --gpu: cada modalidad en la GPU con CuPy (recorrido_gpu.py, entorno fly-gpu), una tras otra; mismo
+      modelo y misma regla de paro. Deja resultados/02_progreso.json para la ventana de progreso.
 Lee:  datos/proofread_connections_783.feather  y  datos/neuron_annotations.tsv
 Deja: resultados/02_capas.parquet      capa media por neurona y modalidad
       resultados/02_percentiles.parquet percentil del rango por modalidad (0 = la más cercana)
@@ -203,7 +205,11 @@ def main():
     ap.add_argument("--umbral-sinapsis", type=int, default=UMBRAL_SINAPSIS, help="sinapsis mínimas por par")
     ap.add_argument("--max-pasos", type=int, default=MAX_PASOS, help="navis usa 15 por defecto")
     ap.add_argument("--procesos", type=int, default=max(1, min(13, (os.cpu_count() or 2) - 1)))
+    ap.add_argument("--gpu", action="store_true", help="correr en la GPU (CuPy; ver recorrido_gpu.py)")
+    ap.add_argument("--etiqueta", default="", help="se agrega al sufijo de los archivos (p. ej. _prueba_gpu)")
     args = ap.parse_args()
+    if args.gpu and args.regla != "arista":
+        sys.exit("--gpu solo implementa la regla por arista")
 
     t0 = time.time()
     W, anot = cargar(args.alcance, args.umbral_sinapsis)
@@ -218,24 +224,64 @@ def main():
                                        "neuronas": int(W.shape[0]), "conexiones": int(W.nnz),
                                        "procesos": args.procesos, "alcance": args.alcance,
                                        "max_pasos": args.max_pasos, "modalidades": {}}
-    tareas = [(M, nombre, sem, args.semilla, args.lote, args.max_corridas, args.max_pasos)
-              for nombre, sem in grupos.items()]
-    with ProcessPoolExecutor(args.procesos) as ex:
-        for nombre, media, frac, hechas, cambio, seg in ex.map(_trabajo, tareas):
-            capas[nombre], alcance[nombre] = media, frac
-            sem = grupos[nombre]
-            resumen["modalidades"][nombre] = {"semillas": int(len(sem)), "corridas": int(hechas),
-                                              "cambio_final_p99": round(cambio, 4),
-                                              "alcanzadas_siempre": int((frac == 1).sum()),
-                                              "segundos": round(seg, 1)}
-            print(f"{nombre:>18}: {len(sem):6,} semillas · {hechas:6,} corridas · cambio p99 {cambio:.4f} · "
-                  f"{seg:5.0f} s", flush=True)
-
     sufijo = ("" if args.regla == "arista" else "_neurona") + ("" if args.alcance == "central" else "_completo")
     if args.max_pasos != MAX_PASOS:
         sufijo += f"_p{args.max_pasos}"
     if args.umbral_sinapsis != UMBRAL_SINAPSIS:
         sufijo += f"_u{args.umbral_sinapsis}"
+    sufijo += args.etiqueta
+
+    def anotar(nombre, media, frac, hechas, cambio, seg):
+        capas[nombre], alcance[nombre] = media, frac
+        sem = grupos[nombre]
+        resumen["modalidades"][nombre] = {"semillas": int(len(sem)), "corridas": int(hechas),
+                                          "cambio_final_p99": round(cambio, 4),
+                                          "alcanzadas_siempre": int((frac == 1).sum()),
+                                          "segundos": round(seg, 1)}
+        print(f"{nombre:>18}: {len(sem):6,} semillas · {hechas:6,} corridas · cambio p99 {cambio:.4f} · "
+              f"{seg:5.0f} s", flush=True)
+
+    if args.gpu:
+        sys.path.insert(0, str(AQUI))
+        import recorrido_gpu
+        G = recorrido_gpu.preparar_gpu(M)
+        del M
+        resumen["gpu"] = True
+        resumen.pop("procesos")
+        RESULTADOS.mkdir(exist_ok=True)
+        prog = RESULTADOS / "02_progreso.json"
+        estado = {"sufijo": sufijo, "inicio": time.strftime("%Y-%m-%dT%H:%M:%S"), "total": len(grupos),
+                  "max_corridas": args.max_corridas, "tol": 0.01, "hechas_mods": {}, "actual": None}
+
+        def guardar():
+            tmp = prog.with_suffix(".tmp")
+            tmp.write_text(json.dumps(estado, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp, prog)
+
+        guardar()
+        for i, (nombre, sem) in enumerate(grupos.items()):
+            t = time.time()
+            semilla = int(np.random.SeedSequence([args.semilla, sum(map(ord, nombre))]).generate_state(1)[0])
+
+            def al_lote(hechas, cambio, nombre=nombre, i=i):
+                estado["actual"] = {"modalidad": nombre, "indice": i, "corridas": hechas,
+                                    "cambio": None if not np.isfinite(cambio) else round(cambio, 4),
+                                    "segundos": round(time.time() - t, 1)}
+                guardar()
+
+            media, frac, hechas, cambio = recorrido_gpu.correr_modalidad_gpu(
+                G, sem, semilla, args.lote, args.max_corridas, max_pasos=args.max_pasos, al_lote=al_lote)
+            seg = time.time() - t
+            anotar(nombre, media, frac, hechas, cambio, seg)
+            estado["hechas_mods"][nombre] = {"corridas": int(hechas), "segundos": round(seg, 1)}
+            estado["actual"] = None
+            guardar()
+    else:
+        tareas = [(M, nombre, sem, args.semilla, args.lote, args.max_corridas, args.max_pasos)
+                  for nombre, sem in grupos.items()]
+        with ProcessPoolExecutor(args.procesos) as ex:
+            for r in ex.map(_trabajo, tareas):
+                anotar(*r)
     ids = anot[["root_id", "super_class", "cell_class", "cell_type"]]
     capas = pd.concat([ids, pd.DataFrame(capas)], axis=1)
     alcance = pd.concat([ids[["root_id"]], pd.DataFrame(alcance)], axis=1)
@@ -252,6 +298,9 @@ def main():
     resumen["segundos_total"] = round(time.time() - t0, 1)
     (RESULTADOS / f"02_resumen{sufijo}.json").write_text(json.dumps(resumen, indent=1, ensure_ascii=False),
                                                          encoding="utf-8")
+    if args.gpu:
+        estado["fin"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        guardar()
     print(f"Listo en {time.time() - t0:.0f} s → resultados/02_*{sufijo}")
 
 

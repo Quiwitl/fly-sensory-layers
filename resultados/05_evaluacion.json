@@ -1,0 +1,697 @@
+{
+ "criterios": "PLAN.md, 20 nov 2026 (sin cambios)",
+ "H2": {
+  "spearman": [
+   {
+    "modalidad": "olfativas",
+    "tipos": "todos",
+    "n_tipos": 7528,
+    "spearman": 0.9716612396829968
+   },
+   {
+    "modalidad": "olfativas",
+    "tipos": "n>=5",
+    "n_tipos": 1507,
+    "spearman": 0.984053956214558
+   },
+   {
+    "modalidad": "gustativas",
+    "tipos": "todos",
+    "n_tipos": 7528,
+    "spearman": 0.9709331911187379
+   },
+   {
+    "modalidad": "gustativas",
+    "tipos": "n>=5",
+    "n_tipos": 1507,
+    "spearman": 0.9754180819536178
+   },
+   {
+    "modalidad": "johnston",
+    "tipos": "todos",
+    "n_tipos": 7529,
+    "spearman": 0.9641039100802936
+   },
+   {
+    "modalidad": "johnston",
+    "tipos": "n>=5",
+    "n_tipos": 1507,
+    "spearman": 0.9718119159059828
+   },
+   {
+    "modalidad": "proyeccion_visual",
+    "tipos": "todos",
+    "n_tipos": 7528,
+    "spearman": 0.977897199489063
+   },
+   {
+    "modalidad": "proyeccion_visual",
+    "tipos": "n>=5",
+    "n_tipos": 1507,
+    "spearman": 0.9846516280510574
+   }
+  ],
+  "veredicto": {
+   "n>=5": {
+    "mediana": 0.9797360190840879,
+    "modalidades_>=0.7": 4,
+    "modalidades": 4,
+    "se_cumple": true
+   },
+   "todos": {
+    "mediana": 0.9712972154008673,
+    "modalidades_>=0.7": 4,
+    "modalidades": 4,
+    "se_cumple": true
+   }
+  }
+ },
+ "H3": {
+  "tope30": {
+   "segmentos": [
+    {
+     "segmento": "MN_T1",
+     "modalidad": "olfativas",
+     "motoneuronas": 139,
+     "capa_mediana": 7.473,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "gustativas",
+     "motoneuronas": 139,
+     "capa_mediana": 6.744,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "johnston",
+     "motoneuronas": 139,
+     "capa_mediana": 6.352,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 139,
+     "capa_mediana": 5.427,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 139,
+     "capa_mediana": 3.948,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 139,
+     "capa_mediana": 5.399,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 139,
+     "capa_mediana": 5.69,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "olfativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.762,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "gustativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.0765,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "johnston",
+     "motoneuronas": 126,
+     "capa_mediana": 6.438,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 126,
+     "capa_mediana": 5.471,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 126,
+     "capa_mediana": 5.378,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 126,
+     "capa_mediana": 3.685,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 126,
+     "capa_mediana": 5.336,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "olfativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.9745,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "gustativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.1945,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "johnston",
+     "motoneuronas": 126,
+     "capa_mediana": 6.6225000000000005,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 126,
+     "capa_mediana": 5.6385,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 126,
+     "capa_mediana": 5.673,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 126,
+     "capa_mediana": 5.2989999999999995,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 126,
+     "capa_mediana": 3.5629999999999997,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "olfativas",
+     "motoneuronas": 64,
+     "capa_mediana": 7.7465,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "gustativas",
+     "motoneuronas": 64,
+     "capa_mediana": 7.2985,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "johnston",
+     "motoneuronas": 64,
+     "capa_mediana": 5.836,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 64,
+     "capa_mediana": 4.964499999999999,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 64,
+     "capa_mediana": 5.938,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 64,
+     "capa_mediana": 5.6135,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 64,
+     "capa_mediana": 5.654,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    }
+   ],
+   "atajo": {
+    "MN_T1": {
+     "mediana_pata": 3.948,
+     "menor_mediana_cabeza": 5.427,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 1.4789999999999996,
+     "ic95": [
+      1.4170000000000003,
+      1.528025
+     ],
+     "atajo_sin_control": false,
+     "diferencias_azar": [
+      -1.4940000000000002,
+      -1.517,
+      -1.521,
+      -1.5349999999999997,
+      -1.4970000000000003,
+      -1.533,
+      -1.5390000000000001,
+      -1.5509999999999997,
+      -1.545,
+      -1.4890000000000003
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": false
+    },
+    "MN_T2": {
+     "mediana_pata": 3.685,
+     "menor_mediana_cabeza": 5.471,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 1.786,
+     "ic95": [
+      1.7355,
+      1.843
+     ],
+     "atajo_sin_control": false,
+     "diferencias_azar": [
+      -1.234,
+      -1.2394999999999996,
+      -1.2384999999999997,
+      -1.2620000000000005,
+      -1.2480000000000002,
+      -1.2229999999999999,
+      -1.2320000000000002,
+      -1.2389999999999999,
+      -1.2514999999999992,
+      -1.2455000000000007
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": false
+    },
+    "MN_T3": {
+     "mediana_pata": 3.5629999999999997,
+     "menor_mediana_cabeza": 5.6385,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 2.0755,
+     "ic95": [
+      2.0014625,
+      2.1210125
+     ],
+     "atajo_sin_control": true,
+     "diferencias_azar": [
+      -1.3034999999999997,
+      -1.2984999999999993,
+      -1.319,
+      -1.3005000000000004,
+      -1.3105000000000002,
+      -1.3359999999999994,
+      -1.311,
+      -1.3195000000000006,
+      -1.3144999999999998,
+      -1.3280000000000003
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": true
+    }
+   },
+   "H3_sin_control": false,
+   "H3": false
+  },
+  "tope15": {
+   "segmentos": [
+    {
+     "segmento": "MN_T1",
+     "modalidad": "olfativas",
+     "motoneuronas": 139,
+     "capa_mediana": 7.473,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "gustativas",
+     "motoneuronas": 139,
+     "capa_mediana": 6.744,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "johnston",
+     "motoneuronas": 139,
+     "capa_mediana": 6.352,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 139,
+     "capa_mediana": 5.427,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 139,
+     "capa_mediana": 3.948,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 139,
+     "capa_mediana": 5.399,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T1",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 139,
+     "capa_mediana": 5.69,
+     "alcanzadas_alguna_vez": 139,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "olfativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.762,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "gustativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.0765,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "johnston",
+     "motoneuronas": 126,
+     "capa_mediana": 6.438,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 126,
+     "capa_mediana": 5.471,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 126,
+     "capa_mediana": 5.378,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 126,
+     "capa_mediana": 3.685,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T2",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 126,
+     "capa_mediana": 5.336,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "olfativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.9745,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "gustativas",
+     "motoneuronas": 126,
+     "capa_mediana": 7.1945,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "johnston",
+     "motoneuronas": 126,
+     "capa_mediana": 6.6225000000000005,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 126,
+     "capa_mediana": 5.6385,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 126,
+     "capa_mediana": 5.673,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 126,
+     "capa_mediana": 5.2989999999999995,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_T3",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 126,
+     "capa_mediana": 3.5629999999999997,
+     "alcanzadas_alguna_vez": 126,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "olfativas",
+     "motoneuronas": 64,
+     "capa_mediana": 7.7465,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "gustativas",
+     "motoneuronas": 64,
+     "capa_mediana": 7.2985,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "johnston",
+     "motoneuronas": 64,
+     "capa_mediana": 5.836,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "proyeccion_visual",
+     "motoneuronas": 64,
+     "capa_mediana": 4.964499999999999,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T1",
+     "motoneuronas": 64,
+     "capa_mediana": 5.938,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T2",
+     "motoneuronas": 64,
+     "capa_mediana": 5.6135,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    },
+    {
+     "segmento": "MN_ala",
+     "modalidad": "mecano_T3",
+     "motoneuronas": 64,
+     "capa_mediana": 5.654,
+     "alcanzadas_alguna_vez": 64,
+     "fraccion_alcance_media": 1.0
+    }
+   ],
+   "atajo": {
+    "MN_T1": {
+     "mediana_pata": 3.948,
+     "menor_mediana_cabeza": 5.427,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 1.4789999999999996,
+     "ic95": [
+      1.4200000000000004,
+      1.5310000000000001
+     ],
+     "atajo_sin_control": false,
+     "diferencias_azar": [
+      -1.4940000000000002,
+      -1.517,
+      -1.521,
+      -1.5349999999999997,
+      -1.4970000000000003,
+      -1.533,
+      -1.5390000000000001,
+      -1.5509999999999997,
+      -1.545,
+      -1.4890000000000003
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": false
+    },
+    "MN_T2": {
+     "mediana_pata": 3.685,
+     "menor_mediana_cabeza": 5.471,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 1.786,
+     "ic95": [
+      1.7344874999999997,
+      1.8389999999999995
+     ],
+     "atajo_sin_control": false,
+     "diferencias_azar": [
+      -1.234,
+      -1.2394999999999996,
+      -1.2384999999999997,
+      -1.2620000000000005,
+      -1.2480000000000002,
+      -1.2229999999999999,
+      -1.2320000000000002,
+      -1.2389999999999999,
+      -1.2514999999999992,
+      -1.2455000000000007
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": false
+    },
+    "MN_T3": {
+     "mediana_pata": 3.5629999999999997,
+     "menor_mediana_cabeza": 5.6385,
+     "modalidad_cabeza_mas_cercana": "proyeccion_visual",
+     "diferencia": 2.0755,
+     "ic95": [
+      1.996974999999999,
+      2.1185125
+     ],
+     "atajo_sin_control": true,
+     "diferencias_azar": [
+      -1.3034999999999997,
+      -1.2984999999999993,
+      -1.319,
+      -1.3005000000000004,
+      -1.3105000000000002,
+      -1.3359999999999994,
+      -1.311,
+      -1.3195000000000006,
+      -1.3144999999999998,
+      -1.3280000000000003
+     ],
+     "grafos_azar": 10,
+     "supera_los_disponibles": true,
+     "supera_azar": true,
+     "atajo": true
+    }
+   },
+   "H3_sin_control": false,
+   "H3": false
+  }
+ }
+}

@@ -1,0 +1,52 @@
+{
+ "modo": "h2",
+ "region_h2": "cerebro",
+ "max_pasos": 15,
+ "tope_corto": null,
+ "neuronas": 122575,
+ "conexiones": 7721446,
+ "azar": 0,
+ "procesos": 4,
+ "lote": 100,
+ "meta_filas": 188508,
+ "quitadas_no_neurona_o_sin_clase": 41739,
+ "pares_archivo": 11752828,
+ "pares_dentro": 7721446,
+ "blancos": {
+  "MN_T1": 0,
+  "MN_T2": 0,
+  "MN_T3": 0,
+  "MN_ala": 0
+ },
+ "modalidades": {
+  "olfativas": {
+   "semillas": 3007,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0267,
+   "alcanzadas_siempre": 119817,
+   "segundos": 253.3
+  },
+  "gustativas": {
+   "semillas": 380,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0293,
+   "alcanzadas_siempre": 119598,
+   "segundos": 252.6
+  },
+  "johnston": {
+   "semillas": 1193,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0282,
+   "alcanzadas_siempre": 120062,
+   "segundos": 254.6
+  },
+  "proyeccion_visual": {
+   "semillas": 7316,
+   "corridas": 1000,
+   "cambio_ultimo_lote_p99": 0.0251,
+   "alcanzadas_siempre": 120316,
+   "segundos": 252.3
+  }
+ },
+ "segundos_total": 259.9
+}

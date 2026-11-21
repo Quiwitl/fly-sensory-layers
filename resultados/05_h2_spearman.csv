@@ -1,0 +1,9 @@
+modalidad,tipos,n_tipos,spearman
+olfativas,todos,7528,0.9716612396829968
+olfativas,n>=5,1507,0.984053956214558
+gustativas,todos,7528,0.9709331911187379
+gustativas,n>=5,1507,0.9754180819536178
+johnston,todos,7529,0.9641039100802936
+johnston,n>=5,1507,0.9718119159059828
+proyeccion_visual,todos,7528,0.977897199489063
+proyeccion_visual,n>=5,1507,0.9846516280510574
