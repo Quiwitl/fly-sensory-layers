@@ -1,0 +1,16 @@
+{
+ "filas_por_neuropilo": 16847997,
+ "pares_sin_umbral": 15091983,
+ "sinapsis_sin_umbral": 54492922,
+ "umbral": 5,
+ "neuronas": 139262,
+ "neuronas_anotadas": 139248,
+ "neuronas_sin_anotacion": 14,
+ "conexiones": 2700513,
+ "sinapsis": 34153566,
+ "grado_medio": 19.39,
+ "grado_max_salida": 6399,
+ "grado_max_entrada": 5080,
+ "neuronas_sin_conexion": 5081,
+ "segundos": 7.3
+}

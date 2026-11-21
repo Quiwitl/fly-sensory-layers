@@ -1,0 +1,5 @@
+datos/
+__pycache__/
+*.parquet
+*.log
+*.err

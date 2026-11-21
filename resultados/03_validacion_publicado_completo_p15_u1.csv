@@ -1,0 +1,14 @@
+modalidad,archivo_publicado,neuronas_propias,neuronas_publicadas,en_ambos,solo_propio,solo_publicado,semillas_propias,semillas_publicadas,spearman,dif_media,dif_abs_media,dif_abs_p95,cumple_H1
+olfativas,olfactory,136699,124185,124174,15074,11,2267,2267,0.9907,-0.028,0.072,0.175,True
+gustativas,gustatory,136696,122265,122254,16994,11,407,343,0.9834,-0.144,0.149,0.331,True
+johnston,mechanosensory-jo,136702,122911,122896,16350,13,779,987,0.9737,0.055,0.104,0.246,True
+cerdas_cabeza,mechanosensory-head-bristle,136696,122222,122211,17037,11,302,302,0.9733,-0.047,0.084,0.205,True
+cerdas_ojo,mechanosensory-eye-bristle,136696,123031,123020,16228,11,1111,1111,0.9735,-0.013,0.082,0.202,True
+taste_peg,mechanosensory-taste-peg,136696,121990,121979,17269,11,75,75,0.9711,-0.074,0.102,0.273,True
+termosensoriales,thermosensory,136696,121944,121933,17315,11,29,29,0.9902,-0.041,0.082,0.2,True
+higrosensoriales,hygrosensory,136696,121989,121978,17270,11,74,74,0.9897,-0.019,0.075,0.182,True
+proyeccion_visual,visual_projection,136696,121924,121913,17335,11,8038,8046,0.9929,-0.012,0.066,0.152,True
+fotorreceptores,visual,139041,132411,132400,6848,11,10237,10260,0.9963,0.011,0.061,0.158,True
+ocelos,ocellar,136704,122188,122177,17071,11,268,268,0.9797,-0.057,0.088,0.21,True
+ascendentes,ascending,136834,122016,122005,17243,11,2231,2277,0.9805,0.001,0.068,0.158,True
+todas,allinputs,139208,138153,138140,1108,13,26234,26230,0.9914,0.004,0.047,0.12,True
