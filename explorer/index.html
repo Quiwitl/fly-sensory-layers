@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capas sensoriales de la mosca</title>
+<script>try { const m = localStorage.getItem("capas-modo"); if (m === "light" || m === "dark") document.documentElement.dataset.modo = m; } catch (e) {}</script>
+<style>
+/* Estilo tomado de kanmachi.co.jp: banda beige arriba, secciones blancas, pie oscuro; títulos en Outfit en mayúsculas
+   y terracota; botones redondos; bandas beige separadas por líneas blancas; marcos de esquinas; puntos de énfasis.
+   La barra de cuadros de color es aquí la escala de capas (1 tinta → 11 durazno) y los anillos, la señal que se propaga.
+   Layout: banda (título + selector); primera pantalla = capa por superclase (2/3) + motoneuronas (1/3); abajo, atajo,
+   dos moscas y tipos, cada una a todo lo ancho. */
+:root {
+  --beige: #e5dcd2; --surface: #ffffff; --block: #efe8df; --ink: #231f1e; --muted: #6b5d55;
+  --terra: #c57b57; --terra-txt: #8a4a2e; --ctl: #a0624a; --hair: #e5dcd2; --linea: #231f1e;
+  --fw: #e60012; --banc: #231f1e; --pata: #f39800; --azar: #8c8580; --mediana: #ffffff;
+  --pie: #231f1e; --pie-txt: #e5dcd2; --rombo: #e60012;
+  --c1: #231f1e; --c2: #4a2e26; --c3: #7a2a1c; --c4: #b8141a; --c5: #e60012; --c6: #c57b57; --c7: #dc892b;
+  --c8: #f39800; --c9: #f7b64a; --c10: #f9cb7f; --c11: #fbe3b8;
+  --en: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --jp: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Helvetica Neue", Arial, sans-serif;
+  --f1: .8rem; --f2: .875rem; --f3: 1rem; --f4: 1.125rem; --f5: 1.375rem; --f6: 1.75rem;
+  --r1: 6px; --r2: 12px; --r3: 24px; --pill: 999px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --beige: #2d2826; --surface: #231f1e; --block: #2d2826; --ink: #f4efe9; --muted: #b9ada2;
+    --terra: #e3a07f; --terra-txt: #e3a07f; --ctl: #8f847c; --hair: #3a3330; --linea: #f4efe9;
+    --fw: #ff5a5f; --banc: #f4efe9; --pata: #ffb347; --azar: #8f847c; --mediana: #231f1e;
+    --pie: #171413; --pie-txt: #d9cfc4; --rombo: #ff5a5f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --beige: #2d2826; --surface: #231f1e; --block: #2d2826; --ink: #f4efe9; --muted: #b9ada2;
+  --terra: #e3a07f; --terra-txt: #e3a07f; --ctl: #8f847c; --hair: #3a3330; --linea: #f4efe9;
+  --fw: #ff5a5f; --banc: #f4efe9; --pata: #ffb347; --azar: #8f847c; --mediana: #231f1e;
+  --pie: #171413; --pie-txt: #d9cfc4; --rombo: #ff5a5f;
+  color-scheme: dark;
+}
+
+/* botón de tema de la página: data-modo gana a data-theme y al tema del sistema por orden (misma especificidad) */
+:root[data-modo="light"] {
+  --beige: #e5dcd2; --surface: #ffffff; --block: #efe8df; --ink: #231f1e; --muted: #6b5d55;
+  --terra: #c57b57; --terra-txt: #8a4a2e; --ctl: #a0624a; --hair: #e5dcd2; --linea: #231f1e;
+  --fw: #e60012; --banc: #231f1e; --pata: #f39800; --azar: #8c8580; --mediana: #ffffff;
+  --pie: #231f1e; --pie-txt: #e5dcd2; --rombo: #e60012;
+  --c1: #231f1e; --c2: #4a2e26; --c3: #7a2a1c; --c4: #b8141a; --c5: #e60012; --c6: #c57b57; --c7: #dc892b;
+  --c8: #f39800; --c9: #f7b64a; --c10: #f9cb7f; --c11: #fbe3b8;
+  color-scheme: light;
+}
+:root[data-modo="dark"] {
+  --beige: #2d2826; --surface: #231f1e; --block: #2d2826; --ink: #f4efe9; --muted: #b9ada2;
+  --terra: #e3a07f; --terra-txt: #e3a07f; --ctl: #8f847c; --hair: #3a3330; --linea: #f4efe9;
+  --fw: #ff5a5f; --banc: #f4efe9; --pata: #ffb347; --azar: #8f847c; --mediana: #231f1e;
+  --pie: #171413; --pie-txt: #d9cfc4; --rombo: #ff5a5f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--surface); }
+body { margin: 0; background: var(--surface); color: var(--ink); font: 500 var(--f3)/1.8 var(--jp); letter-spacing: .03em; }
+.envoltura { max-width: 1280px; margin-inline: auto; padding-inline: clamp(16px, 3.5vw, 48px); }
+a { color: inherit; }
+button, input, select { font: inherit; color: inherit; letter-spacing: inherit; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+h1, h2 { margin: 0; text-wrap: balance; }
+.nota, .fig-l, .glabel, dt, .lead { color: var(--muted); }
+.nota { font-size: var(--f2); }
+
+/* ---------- banda superior */
+.banda-top { background: var(--beige); position: relative; overflow: hidden; }
+.top { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 22px; align-items: center; padding-top: 12px; padding-bottom: 6px; position: relative; z-index: 1; }
+.sello { width: 88px; height: 88px; }
+.sello svg { width: 100%; height: 100%; animation: girar 28s linear infinite; overflow: visible; }
+.sello text { font: 600 11.6px var(--en); letter-spacing: .14em; fill: var(--ink); }
+@keyframes girar { to { transform: rotate(360deg); } }
+.kicker { margin: 0; font: 600 var(--f1)/1.5 var(--en); letter-spacing: .18em; text-transform: uppercase; color: var(--terra-txt); }
+h1 { font: 700 var(--f6)/1.25 var(--jp); letter-spacing: .08em; margin-top: 2px; }
+.sub { margin: 4px 0 0; font-size: var(--f2); line-height: 1.8; max-width: 100ch; color: var(--ink); }
+.sub em { font-style: normal; text-emphasis: filled dot var(--terra); -webkit-text-emphasis: filled dot var(--terra); text-emphasis-position: over right; -webkit-text-emphasis-position: over; }
+.enlaces { display: flex; gap: 20px; align-items: center; }
+.enlace-linea { font: 600 var(--f1)/1 var(--en); letter-spacing: .16em; text-transform: uppercase; text-decoration: none; padding: 10px 0; border-top: 1.5px solid var(--linea); border-bottom: 1.5px solid var(--linea); }
+.enlace-linea:hover { color: var(--terra-txt); }
+.circulo { width: 56px; height: 56px; border-radius: 50%; border: 1.5px solid var(--linea); background: transparent; font: 600 var(--f1) var(--en); letter-spacing: .14em; cursor: pointer; flex: none; }
+@media (hover: hover) { .circulo:hover { background: var(--ink); color: var(--beige); } }
+.circulo svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; display: block; margin: auto; }
+.enlaces .botones { display: flex; gap: 10px; }
+.motivo { height: 132px; background: var(--beige); overflow: hidden; }
+.motivo svg { display: block; width: 100%; height: 100%; }
+
+/* selector */
+.selector { display: grid; gap: 6px; padding-top: 6px; padding-bottom: 14px; position: relative; z-index: 1; }
+.grupo { display: flex; gap: 16px; align-items: baseline; min-width: 0; }
+.glabel { font: 600 var(--f1)/1.3 var(--en); letter-spacing: .16em; text-transform: uppercase; flex: 0 0 9.5rem; color: var(--muted); }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; min-width: 0; }
+.pill, .mini-pills button {
+  border: 1px solid var(--ctl); background: transparent; border-radius: var(--pill); padding: 1px 13px; min-height: 32px;
+  font-size: var(--f2); font-weight: 500; cursor: pointer; line-height: 1.3; display: inline-flex; align-items: center; gap: 7px; color: var(--ink);
+}
+.pill:hover, .mini-pills button:hover { border-color: var(--ink); }
+.pill[aria-pressed="true"], .mini-pills button[aria-pressed="true"] { background: var(--ink); color: var(--surface); border-color: var(--ink); font-weight: 700; }
+.pill .dots { display: inline-flex; gap: 3px; }
+.pill .dots i { width: 7px; height: 7px; display: block; }
+.pill .dots .f { background: var(--fw); border-radius: 50%; } .pill .dots .b { background: var(--banc); }
+.pill[aria-pressed="true"] .dots .b { background: var(--surface); }
+
+/* ---------- primera pantalla */
+.primera { display: grid; grid-template-columns: minmax(0, 2.15fr) minmax(18rem, 1fr); gap: 40px; padding-top: 14px; padding-bottom: 28px; }
+.h2 { font: 600 var(--f4)/1.3 var(--en); letter-spacing: .14em; text-transform: uppercase; color: var(--terra-txt); }
+.phead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+.leyenda { display: flex; gap: 18px; font-size: var(--f1); color: var(--muted); flex-wrap: wrap; letter-spacing: .04em; }
+.leyenda span { display: inline-flex; gap: 7px; align-items: center; }
+.leyenda svg { width: 14px; height: 14px; flex: none; }
+.chart { position: relative; width: 100%; }
+.chart > svg { display: block; width: 100%; overflow: visible; }
+.chart text { fill: var(--muted); font: 500 12.8px var(--en); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+.chart .lab { fill: var(--ink); font: 500 14px var(--jp); letter-spacing: .04em; }
+.chart .grid { stroke: var(--hair); }
+.chart .row { cursor: pointer; }
+.chart .hit { fill: transparent; }
+.chart .row:hover .hit, .chart .row.on .hit { fill: var(--block); }
+.chart .row.on .lab { font-weight: 700; }
+.pie-chart { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.escala { display: flex; align-items: center; gap: 10px; font: 500 var(--f1) var(--en); color: var(--muted); letter-spacing: .06em; }
+.escala .cuadros { display: flex; outline: 1px solid var(--hair); }
+.escala .cuadros i { width: 16px; height: 10px; display: block; }
+.como { font-size: var(--f2); color: var(--muted); }
+.como summary { cursor: pointer; width: fit-content; font: 600 var(--f1) var(--en); letter-spacing: .14em; text-transform: uppercase; }
+.como p { margin: 6px 0 0; max-width: 72ch; line-height: 1.9; }
+
+.esquinas { position: relative; }
+.esquinas::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  --l: 14px; --g: 1.5px; --c: var(--ctl);
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--l) var(--g), linear-gradient(var(--c), var(--c)) top left / var(--g) var(--l),
+    linear-gradient(var(--c), var(--c)) top right / var(--l) var(--g), linear-gradient(var(--c), var(--c)) top right / var(--g) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) var(--g), linear-gradient(var(--c), var(--c)) bottom left / var(--g) var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) var(--g), linear-gradient(var(--c), var(--c)) bottom right / var(--g) var(--l);
+  background-repeat: no-repeat;
+}
+.mn { padding: 14px 20px 16px; align-self: start; margin-top: 4px; }
+.mn .h2 { margin-bottom: 10px; }
+.cifra { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.chip-capa { width: 14px; height: 40px; flex: none; }
+.fig { font: 600 2.75rem/1 var(--en); letter-spacing: -.01em; }
+.fig-l { font-size: var(--f2); max-width: 20ch; line-height: 1.5; }
+.mnrows { margin-top: 12px; display: grid; }
+.mnrow { display: grid; grid-template-columns: minmax(0, 1fr) 5rem 2.6rem; gap: 10px; align-items: center; font-size: var(--f2); padding: 5px 0; border-top: 1px solid var(--hair); line-height: 1.5; }
+.mnrow .n { color: var(--muted); font-size: var(--f1); display: block; letter-spacing: .02em; }
+.mnrow svg { width: 100%; height: 14px; display: block; }
+.mnrow .v { font: 600 var(--f3) var(--en); text-align: right; font-variant-numeric: tabular-nums; }
+.mnrow.na { color: var(--muted); }
+.meta { margin: 14px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; font-size: var(--f1); line-height: 1.8; }
+.meta dd { margin: 0; font: 600 var(--f2) var(--en); font-variant-numeric: tabular-nums; }
+
+/* ---------- secciones a todo lo ancho */
+.seccion { padding: 56px 0 56px; border-top: 1px solid var(--hair); }
+.shead { text-align: center; display: grid; justify-items: center; gap: 10px; margin-bottom: 28px; }
+.h2-grande { font: 600 var(--f6)/1.2 var(--en); letter-spacing: .1em; text-transform: uppercase; color: var(--terra); }
+.lead { margin: 0; max-width: 70ch; font-size: var(--f2); line-height: 1.9; }
+.veredicto { margin: 20px auto 0; max-width: 78ch; font-size: var(--f3); line-height: 1.9; text-align: center; }
+.atajo .chart .banda { fill: var(--block); }
+
+.dos-grid { display: grid; grid-template-columns: minmax(0, 480px) minmax(0, 1fr); gap: 48px; align-items: center; max-width: 1060px; margin-inline: auto; }
+.scatter-wrap { position: relative; aspect-ratio: 1; width: 100%; max-width: 480px; padding: 10px; }
+#dos-canvas { width: 100%; height: 100%; display: block; }
+.dos-txt p { margin: 0 0 14px; max-width: 52ch; line-height: 1.9; }
+.big-rho { display: flex; align-items: baseline; gap: 12px; }
+.big-rho .fig { font-size: 4rem; color: var(--terra-txt); }
+.mini-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+
+.filtros { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.campo { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ctl); border-radius: var(--pill); background: var(--surface); padding: 0 16px; min-height: 40px; }
+.campo input { border: 0; background: none; outline: none; width: 12rem; font-size: var(--f2); padding: 6px 0; }
+.campo select { border: 0; background: none; font-size: var(--f2); padding: 6px 0; max-width: 15rem; }
+.campo:focus-within { outline: 2px solid var(--ink); outline-offset: 2px; }
+.ico { width: 16px; height: 16px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.tabla-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: var(--f2); }
+th { text-align: left; font: 600 var(--f1) var(--en); letter-spacing: .14em; text-transform: uppercase; padding: 10px 14px 10px 0; border-bottom: 1.5px solid var(--linea); white-space: nowrap; color: var(--ink); }
+td { padding: 7px 14px 7px 0; border-bottom: 1px solid var(--hair); vertical-align: middle; line-height: 1.5; }
+tbody tr:hover td { background: var(--block); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.num { font: 600 var(--f2) var(--en); }
+td .cap { display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end; }
+td .cap i { width: 10px; height: 10px; display: block; }
+td.barra { width: 28%; min-width: 120px; }
+td.barra svg { width: 100%; height: 12px; display: block; }
+.mas { display: flex; justify-content: center; margin-top: 28px; }
+.mas button { border: 0; border-top: 1.5px solid var(--linea); border-bottom: 1.5px solid var(--linea); background: none; padding: 12px 48px; min-height: 44px; cursor: pointer; font: 600 var(--f1) var(--en); letter-spacing: .18em; text-transform: uppercase; }
+.mas button:hover { color: var(--terra-txt); }
+
+.tip { position: fixed; z-index: 10; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ink); border-radius: var(--r1); padding: 8px 10px; font-size: var(--f1); line-height: 1.6; max-width: 19rem; letter-spacing: .02em; }
+.tip b { font-weight: 700; }
+.tip .m { font-family: var(--en); font-variant-numeric: tabular-nums; }
+.scatter-wrap .tip { position: absolute; }
+
+/* ---------- pie */
+.pie { background: var(--pie); color: var(--pie-txt); padding: 48px 0 56px; }
+.pie-marca { margin: 0; text-align: center; font: 700 var(--f5) var(--jp); letter-spacing: .1em; color: #ffffff; }
+.pie-sub { margin: 4px 0 28px; text-align: center; font: 600 var(--f1) var(--en); letter-spacing: .2em; }
+.pie ul { list-style: none; margin: 0 auto; padding: 24px 0 0; border-top: 1px solid rgba(229, 220, 210, .25); display: grid; gap: 10px; max-width: 92ch; }
+.pie li { position: relative; padding-left: 20px; font-size: var(--f2); line-height: 1.9; }
+.pie li::before { content: ""; position: absolute; left: 2px; top: .72em; width: 7px; height: 7px; background: var(--rombo); transform: rotate(45deg); }
+.pie a { color: #ffffff; }
+
+@media (max-width: 960px) {
+  .primera { grid-template-columns: 1fr; gap: 24px; }
+  .dos-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 600px) {
+  .top { grid-template-columns: auto minmax(0, 1fr); gap: 12px; padding-top: 14px; }
+  .enlaces { grid-column: 1 / -1; justify-content: space-between; }
+  .sello { width: 64px; height: 64px; }
+  .sello text { font-size: 12.5px; }
+  h1 { font-size: var(--f5); letter-spacing: .05em; }
+  .sub { font-size: var(--f1); }
+  .grupo { flex-direction: column; gap: 6px; align-items: stretch; }
+  .glabel { flex: none; }
+  .pills { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: thin; max-width: 100%; }
+  .pill, .mini-pills button { white-space: nowrap; min-height: 40px; }
+  .circulo { width: 48px; height: 48px; }
+  .mn { padding: 14px 14px 16px; }
+  .seccion { padding: 40px 0; }
+  .h2-grande { font-size: var(--f5); }
+  .campo input { width: 9rem; }
+  .fig { font-size: 2.25rem; }
+  .big-rho .fig { font-size: 3rem; }
+  td.barra { display: none; }
+  .motivo { height: 96px; }
+}
+.sello-centro rect { animation: pulso 2.4s ease-in-out infinite; }
+.sello-centro rect:nth-child(1) { animation-delay: 0s; } .sello-centro rect:nth-child(2) { animation-delay: .12s; }
+.sello-centro rect:nth-child(4) { animation-delay: .12s; } .sello-centro rect:nth-child(5) { animation-delay: .24s; }
+.sello-centro rect:nth-child(3) { animation-delay: .24s; } .sello-centro rect:nth-child(7) { animation-delay: .24s; }
+.sello-centro rect:nth-child(6) { animation-delay: .36s; } .sello-centro rect:nth-child(8) { animation-delay: .36s; }
+.sello-centro rect:nth-child(9) { animation-delay: .48s; }
+@keyframes pulso { 0%, 60%, 100% { opacity: 1; } 30% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .sello svg, .sello-centro rect { animation: none !important; } }
+
+</style>
+</head>
+<body>
+<div class="banda-top">
+  <header class="top envoltura">
+    <div class="sello" aria-hidden="true">
+      <svg viewBox="0 0 120 120"><defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+        <text><textPath href="#circ" textLength="286" lengthAdjust="spacing">FLY SENSORY LAYERS · FLYWIRE · BANC · </textPath></text>
+        <g class="sello-centro"><rect x="42.0" y="42.0" width="11" height="11" fill="var(--c1)"/><rect x="54.5" y="42.0" width="11" height="11" fill="var(--c2)"/><rect x="67.0" y="42.0" width="11" height="11" fill="var(--c3)"/><rect x="42.0" y="54.5" width="11" height="11" fill="var(--c4)"/><rect x="54.5" y="54.5" width="11" height="11" fill="var(--c5)"/><rect x="67.0" y="54.5" width="11" height="11" fill="var(--c6)"/><rect x="42.0" y="67.0" width="11" height="11" fill="var(--c7)"/><rect x="54.5" y="67.0" width="11" height="11" fill="var(--c8)"/><rect x="67.0" y="67.0" width="11" height="11" fill="var(--c9)"/></g></svg>
+    </div>
+    <div class="titulo">
+      <p class="kicker" data-t="kicker"></p>
+      <h1 data-t="titulo">capas sensoriales de la mosca</h1>
+      <p class="sub" id="sub"></p>
+    </div>
+    <nav class="enlaces">
+      <a class="enlace-linea" href="https://github.com/Quiwitl/fly-sensory-layers" data-t="repo">código e informe</a>
+      <div class="botones">
+        <button type="button" class="circulo" id="modo"></button>
+        <button type="button" class="circulo" id="lang" aria-label="English">EN</button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="selector envoltura" aria-labelledby="sel-t">
+    <h2 id="sel-t" class="vh" data-t="elige"></h2>
+    <div class="grupo"><span class="glabel" data-t="g_cabeza"></span><div class="pills" id="pills-cabeza"></div></div>
+    <div class="grupo"><span class="glabel" data-t="g_patas"></span><div class="pills" id="pills-patas"></div></div>
+  </section>
+</div>
+
+<main id="main" aria-busy="true">
+  <div class="primera envoltura">
+    <section class="panel sc" aria-labelledby="sc-t">
+      <div class="phead">
+        <h2 id="sc-t" class="h2" data-t="sc_t"></h2>
+        <div class="leyenda" id="leyenda"></div>
+      </div>
+      <div id="sc-chart" class="chart" role="img"></div>
+      <div class="pie-chart">
+        <div class="escala" id="escala" aria-hidden="true"></div>
+        <details class="como"><summary data-t="como_s"></summary><p data-t="como"></p></details>
+      </div>
+    </section>
+
+    <aside class="panel mn esquinas" aria-labelledby="mn-t">
+      <h2 id="mn-t" class="h2" data-t="mn_t"></h2>
+      <div class="cifra"><span id="mn-chip" class="chip-capa" aria-hidden="true"></span><span id="mn-big" class="fig">–</span><span id="mn-big-l" class="fig-l"></span></div>
+      <div id="mn-rows" class="mnrows"></div>
+      <dl class="meta" id="meta"></dl>
+    </aside>
+  </div>
+
+  <section class="seccion atajo" aria-labelledby="at-t">
+    <div class="envoltura">
+      <div class="shead"><h2 id="at-t" class="h2-grande" data-t="at_t"></h2><p class="lead" data-t="at_lead"></p></div>
+      <div id="at-chart" class="chart" role="img"></div>
+      <p class="veredicto" id="at-verdict"></p>
+    </div>
+  </section>
+
+  <section class="seccion dos" aria-labelledby="dos-t">
+    <div class="envoltura">
+      <div class="shead"><h2 id="dos-t" class="h2-grande" data-t="dos_t"></h2><div class="mini-pills" id="dos-pills" role="group"></div></div>
+      <div class="dos-grid">
+        <div class="scatter-wrap esquinas"><canvas id="dos-canvas" role="img"></canvas><div id="dos-tip" class="tip" hidden></div></div>
+        <div class="dos-txt">
+          <p class="big-rho"><span id="dos-rho" class="fig">–</span><span class="fig-l" data-t="rho_l"></span></p>
+          <p id="dos-desc"></p>
+          <p class="nota" id="dos-nota"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion tipos" aria-labelledby="ti-t">
+    <div class="envoltura">
+      <div class="shead"><h2 id="ti-t" class="h2-grande" data-t="ti_t"></h2></div>
+      <div class="filtros">
+        <label class="campo"><span class="vh" data-t="buscar"></span><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"/><path d="M21 21l-6 -6"/></svg><input id="q" type="search" autocomplete="off"></label>
+        <label class="campo sel"><span class="vh" data-t="superclase"></span><select id="fsc"></select></label>
+        <span id="cuenta" class="nota"></span>
+      </div>
+      <div class="tabla-wrap"><table id="tabla"><thead></thead><tbody></tbody></table></div>
+      <div class="mas"><button type="button" id="mas" data-t="mas"></button></div>
+    </div>
+  </section>
+</main>
+
+<div class="motivo" aria-hidden="true"><svg id="motivo" preserveAspectRatio="xMidYMid slice"></svg></div>
+<footer class="pie">
+  <div class="envoltura">
+    <p class="pie-marca" data-t="titulo"></p>
+    <p class="pie-sub">FLYWIRE v783 · BANC v888 · SCHLEGEL ET AL. 2021</p>
+    <ul>
+      <li data-t="pie_metodo"></li>
+      <li data-t="pie_datos"></li>
+      <li id="pie-enlaces"></li>
+      <li data-t="pie_autor"></li>
+    </ul>
+  </div>
+</footer>
+<div id="tip" class="tip" hidden></div>
+<script>
+"use strict";
+// Explorador de capas sensoriales. Datos: data.json (07_explorador_datos.py del proyecto fly-sensory-layers).
+const MODS = [
+  ["olfativas", "cabeza"], ["gustativas", "cabeza"], ["johnston", "cabeza"], ["proyeccion_visual", "cabeza"],
+  ["fotorreceptores", "cabeza"], ["ocelos", "cabeza"], ["cerdas_cabeza", "cabeza"], ["cerdas_ojo", "cabeza"],
+  ["taste_peg", "cabeza"], ["termosensoriales", "cabeza"], ["higrosensoriales", "cabeza"], ["ascendentes", "cabeza"],
+  ["todas", "cabeza"], ["mecano_T1", "patas"], ["mecano_T2", "patas"], ["mecano_T3", "patas"],
+];
+const H2_MODS = ["olfativas", "gustativas", "johnston", "proyeccion_visual"];
+const SC = {
+  sensory: "sens", sensory_ascending: "sensasc", ascending: "asc", visual_projection: "vproj",
+  central: "central", central_brain_intrinsic: "central", optic: "optic", optic_lobe_intrinsic: "optic",
+  visual_centrifugal: "vcent", ventral_nerve_cord_intrinsic: "vnc", descending: "desc", motor: "motor",
+  endocrine: "endo", visceral_circulatory: "visc",
+};
+const XMAX = 11, XMIN = 1;
+
+const T = {
+  es: {
+    titulo: "capas sensoriales de la mosca", kicker: "Connectome explorer · Drosophila",
+    sub: "Elige una entrada sensorial y mira en <em>cuántos pasos</em> llega la señal a cada parte del sistema nervioso: el cerebro completo (FlyWire) y el cerebro con cordón nervioso (BANC).",
+    escala: "escala de capas", otro: "English", a_oscuro: "Cambiar a modo oscuro", a_claro: "Cambiar a modo claro",
+    repo: "código e informe", elige: "entrada sensorial", g_cabeza: "cabeza", g_patas: "patas (BANC)",
+    sc_t: "capa por superclase", fw: "FlyWire · cerebro", banc: "BANC · cerebro y cordón",
+    como_s: "cómo leerlo",
+    como: "La capa es el paso del recorrido en que llega la señal: 1 son las neuronas sensoriales que elegiste, y en cada paso una sinapsis se cruza con probabilidad proporcional a su peso (modelo de Schlegel et al. 2021). La marca es la mediana de las neuronas del grupo, la barra gruesa el 50 % central y la línea el 80 %. Las semillas no cuentan. Toca un grupo para ver sus tipos celulares abajo.",
+    mn_t: "hasta las motoneuronas", mn_big: (g) => `pasos hasta las motoneuronas más cercanas: ${g}`,
+    mn_cerebro: "cerebro", mn_T1: "pata delantera · T1", mn_T2: "pata media · T2", mn_T3: "pata trasera · T3", mn_ala: "ala",
+    n_mn: (n) => `${n} motoneuronas`, sin_dato: "sin dato", no_fw: "esta entrada no está en FlyWire", no_banc: "esta entrada no está en BANC",
+    semillas: "semillas", replica: "réplica de lo publicado", neuronas: "neuronas",
+    at_t: "el atajo de las patas",
+    at_lead: "Las motoneuronas de cada pata, ¿reciben antes la señal de los mecanosensores de esa misma pata que la de cualquier sentido de la cabeza? Se compara con la entrada más rápida de la cabeza (la proyección visual) y con 10 grafos al azar que conservan los grados de cada neurona.",
+    at_pata: "desde su pata", at_cabeza: "desde la vista", at_dif: "capas antes", at_azar: "10 grafos al azar", at_crit: "criterio: 2 capas",
+    at_eje1: "capa mediana de las motoneuronas", at_eje2: "diferencia (capas)",
+    at_verdict: (ok, n) => `En las tres patas la señal de la propia pata llega antes, y la ventaja supera a los 10 grafos al azar (en ellos sale al revés). Pero el criterio fijado antes de correr pedía al menos 2 capas en las tres patas, y solo ${n} lo alcanza, así que la hipótesis H3 no se cumple.`,
+    dos_t: "dos moscas, la misma capa",
+    rho_l: "Spearman entre moscas, por tipo celular",
+    dos_desc: (m, n) => `Cada punto es un tipo celular que existe en las dos moscas (${n.toLocaleString("es-MX")} tipos). Eje horizontal: su capa media en FlyWire; vertical: en BANC, desde ${m}.`,
+    dos_nota_fw: (m) => `${m} solo está en el cerebro de FlyWire; aquí se muestra la comparación de una entrada que sí está en las dos moscas.`,
+    dos_nota: "FlyWire y BANC son dos hembras distintas, reconstruidas por equipos distintos, y aun así ordenan sus tipos celulares casi igual.",
+    eje_fw: "capa en FlyWire", eje_banc: "capa en BANC",
+    ti_t: "tipos celulares", buscar: "buscar tipo", superclase: "superclase", todas_sc: "todas las superclases",
+    th_tipo: "tipo", th_sc: "superclase", th_n: "neuronas", th_fw: "capa FlyWire", th_banc: "capa BANC", th_barra: "",
+    mas: "mostrar 40 más", cuenta: (a, b) => `${a.toLocaleString("es-MX")} de ${b.toLocaleString("es-MX")} tipos`,
+    pie_metodo: "Método: recorrido probabilístico de Schlegel et al. (2021), sin umbral de sinapsis y con tope de 15 pasos; en FlyWire hasta que la capa media converge, en BANC 1,000 corridas por entrada. Las capas de FlyWire reproducen las publicadas por Dorkenwald et al. (2024) con Spearman de 0.971 a 0.996.",
+    pie_datos: "Datos: FlyWire v783 (Dorkenwald et al. 2024; Schlegel et al. 2024) y BANC v888 (Bates et al. 2026), CC BY-NC 4.0. Las superclases de BANC se agrupan con sus equivalentes de FlyWire; los grupos de menos de 20 neuronas se omiten.",
+    pie_autor: "Atlahua Quiahuitl Martínez Obregón · Ingeniería en Computación, UAM Azcapotzalco · noviembre de 2026.",
+    cargando: "cargando datos…", error: "No se pudieron cargar los datos. Recarga la página.",
+    mods: {
+      olfativas: "olfato", gustativas: "gusto", johnston: "oído y viento", proyeccion_visual: "proyección visual",
+      fotorreceptores: "fotorreceptores", ocelos: "ocelos", cerdas_cabeza: "cerdas de la cabeza", cerdas_ojo: "cerdas del ojo",
+      taste_peg: "clavijas gustativas", termosensoriales: "temperatura", higrosensoriales: "humedad", ascendentes: "ascendentes",
+      todas: "todas juntas", mecano_T1: "pata delantera", mecano_T2: "pata media", mecano_T3: "pata trasera",
+    },
+    modlargo: {
+      olfativas: "los receptores olfativos", gustativas: "los receptores del gusto", johnston: "el órgano de Johnston (oído y viento)",
+      proyeccion_visual: "las neuronas de proyección visual", fotorreceptores: "los fotorreceptores", ocelos: "los ocelos",
+      cerdas_cabeza: "las cerdas de la cabeza", cerdas_ojo: "las cerdas del ojo", taste_peg: "las clavijas gustativas",
+      termosensoriales: "los termosensores", higrosensoriales: "los higrosensores", ascendentes: "las neuronas ascendentes del cordón",
+      todas: "todas las entradas sensoriales", mecano_T1: "los mecanosensores de la pata delantera",
+      mecano_T2: "los mecanosensores de la pata media", mecano_T3: "los mecanosensores de la pata trasera",
+    },
+    sc: {
+      sens: "sensoriales", sensasc: "sensoriales ascendentes", asc: "ascendentes", vproj: "proyección visual",
+      central: "cerebro central", optic: "lóbulo óptico", vcent: "centrífugas visuales", vnc: "cordón ventral",
+      desc: "descendentes", motor: "motoneuronas", endo: "endocrinas", visc: "viscerales",
+    },
+    tip_sc: (s, n, q) => `<b>${s}</b><br><span class="m">mediana ${q[2]} · 50 % ${q[1]}–${q[3]} · 80 % ${q[0]}–${q[4]}</span><br>${n} neuronas`,
+  },
+  en: {
+    titulo: "sensory layers of the fly", kicker: "Connectome explorer · Drosophila",
+    sub: "Pick a sensory input and see <em>how many steps</em> the signal takes to reach each part of the fly nervous system: the whole brain (FlyWire) and the brain with its nerve cord (BANC).",
+    escala: "layer scale", otro: "Español", a_oscuro: "Switch to dark mode", a_claro: "Switch to light mode",
+    repo: "code and report", elige: "sensory input", g_cabeza: "head", g_patas: "legs (BANC)",
+    sc_t: "layer by super class", fw: "FlyWire · brain", banc: "BANC · brain and nerve cord",
+    como_s: "how to read it",
+    como: "The layer is the traversal step at which the signal arrives: 1 is the sensory neurons you picked, and at each step a synapse is crossed with a probability proportional to its weight (Schlegel et al. 2021 model). The tick is the median of the group's neurons, the thick bar the middle 50 % and the line the middle 80 %. Seeds are left out. Tap a group to list its cell types below.",
+    mn_t: "to the motor neurons", mn_big: (g) => `steps to the closest motor neurons: ${g}`,
+    mn_cerebro: "brain", mn_T1: "front leg · T1", mn_T2: "middle leg · T2", mn_T3: "hind leg · T3", mn_ala: "wing",
+    n_mn: (n) => `${n} motor neurons`, sin_dato: "no data", no_fw: "this input is not in FlyWire", no_banc: "this input is not in BANC",
+    semillas: "seeds", replica: "replication of published layers", neuronas: "neurons",
+    at_t: "the leg shortcut",
+    at_lead: "Do the motor neurons of each leg get the signal from that same leg's mechanosensors before any head sense? Compared with the fastest head input (visual projection neurons) and with 10 random graphs that keep every neuron's degrees.",
+    at_pata: "from its leg", at_cabeza: "from vision", at_dif: "layers earlier", at_azar: "10 random graphs", at_crit: "criterion: 2 layers",
+    at_eje1: "median layer of the motor neurons", at_eje2: "difference (layers)",
+    at_verdict: (ok, n) => `In all three legs the leg's own signal arrives first, and the lead beats all 10 random graphs (where it goes the other way). But the criterion fixed before running asked for at least 2 layers in all three legs, and only ${n} reaches it, so hypothesis H3 is not met.`,
+    dos_t: "two flies, the same layers",
+    rho_l: "Spearman between flies, by cell type",
+    dos_desc: (m, n) => `Each dot is a cell type found in both flies (${n.toLocaleString("en-US")} types). Horizontal axis: its mean layer in FlyWire; vertical: in BANC, from ${m}.`,
+    dos_nota_fw: (m) => `${m} is only in the FlyWire brain; this shows an input that both flies have.`,
+    dos_nota: "FlyWire and BANC are two different females, reconstructed by different teams, and they still rank their cell types almost the same way.",
+    eje_fw: "layer in FlyWire", eje_banc: "layer in BANC",
+    ti_t: "cell types", buscar: "search type", superclase: "super class", todas_sc: "all super classes",
+    th_tipo: "type", th_sc: "super class", th_n: "neurons", th_fw: "FlyWire layer", th_banc: "BANC layer", th_barra: "",
+    mas: "show 40 more", cuenta: (a, b) => `${a.toLocaleString("en-US")} of ${b.toLocaleString("en-US")} types`,
+    pie_metodo: "Method: probabilistic traversal of Schlegel et al. (2021), no synapse threshold and a 15-step cap; in FlyWire until the mean layer converges, in BANC 1,000 runs per input. The FlyWire layers reproduce those published by Dorkenwald et al. (2024) at Spearman 0.971–0.996.",
+    pie_datos: "Data: FlyWire v783 (Dorkenwald et al. 2024; Schlegel et al. 2024) and BANC v888 (Bates et al. 2026), CC BY-NC 4.0. BANC super classes are grouped with their FlyWire equivalents; groups under 20 neurons are left out.",
+    pie_autor: "Atlahua Quiahuitl Martínez Obregón · Computer Engineering, UAM Azcapotzalco · November 2026.",
+    cargando: "loading data…", error: "The data could not be loaded. Reload the page.",
+    mods: {
+      olfativas: "smell", gustativas: "taste", johnston: "hearing and wind", proyeccion_visual: "visual projection",
+      fotorreceptores: "photoreceptors", ocelos: "ocelli", cerdas_cabeza: "head bristles", cerdas_ojo: "eye bristles",
+      taste_peg: "taste pegs", termosensoriales: "temperature", higrosensoriales: "humidity", ascendentes: "ascending",
+      todas: "all together", mecano_T1: "front leg", mecano_T2: "middle leg", mecano_T3: "hind leg",
+    },
+    modlargo: {
+      olfativas: "the olfactory receptor neurons", gustativas: "the gustatory receptors", johnston: "Johnston's organ (hearing and wind)",
+      proyeccion_visual: "the visual projection neurons", fotorreceptores: "the photoreceptors", ocelos: "the ocelli",
+      cerdas_cabeza: "the head bristles", cerdas_ojo: "the eye bristles", taste_peg: "the taste pegs",
+      termosensoriales: "the thermosensors", higrosensoriales: "the hygrosensors", ascendentes: "the ascending neurons from the nerve cord",
+      todas: "all sensory inputs", mecano_T1: "the front-leg mechanosensors", mecano_T2: "the middle-leg mechanosensors",
+      mecano_T3: "the hind-leg mechanosensors",
+    },
+    sc: {
+      sens: "sensory", sensasc: "sensory ascending", asc: "ascending", vproj: "visual projection",
+      central: "central brain", optic: "optic lobe", vcent: "visual centrifugal", vnc: "ventral nerve cord",
+      desc: "descending", motor: "motor neurons", endo: "endocrine", visc: "visceral",
+    },
+    tip_sc: (s, n, q) => `<b>${s}</b><br><span class="m">median ${q[2]} · 50 % ${q[1]}–${q[3]} · 80 % ${q[0]}–${q[4]}</span><br>${n} neurons`,
+  },
+};
+
+const $ = (s) => document.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const fmt = (v, d = 1) => (v == null ? "–" : Number(v).toFixed(d));
+let D = null, lang = "es", mod = "olfativas", h2mod = "olfativas", scFiltro = "", pagina = 15;
+const L = () => T[lang];
+const loc = () => (lang === "es" ? "es-MX" : "en-US");
+const nf = (n) => Number(n).toLocaleString(loc());
+
+function guardar(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento */ } }
+function leer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+const hashDe = (m) => m.toLowerCase().replace(/_/g, "-");
+const modDeHash = (h) => MODS.map((x) => x[0]).find((m) => hashDe(m) === h.replace(/^#/, "").toLowerCase());
+
+// ---------- textos fijos
+function textos() {
+  document.documentElement.lang = lang;
+  document.title = lang === "es" ? "Capas sensoriales de la mosca" : "Sensory layers of the fly";
+  document.querySelectorAll("[data-t]").forEach((el) => {
+    const v = L()[el.dataset.t];
+    if (typeof v === "string") el.textContent = v;
+  });
+  $("#sub").innerHTML = L().sub;
+  $("#q").placeholder = L().buscar;
+  const b = $("#lang");
+  b.textContent = lang === "es" ? "EN" : "ES"; b.setAttribute("aria-label", L().otro); b.lang = lang === "es" ? "en" : "es";
+  botonModo();
+  $("#leyenda").innerHTML = `<span><svg viewBox="0 0 14 14" aria-hidden="true"><rect y="3" width="14" height="8" fill="var(--fw)"/></svg>${L().fw}</span>`
+    + `<span><svg viewBox="0 0 14 14" aria-hidden="true"><rect y="3" width="14" height="8" fill="var(--banc)"/></svg>${L().banc}</span>`;
+  $("#escala").innerHTML = `<span>${esc(L().escala)}</span><span>1</span><span class="cuadros">${Array.from({ length: 11 }, (_, i) => `<i style="background:var(--c${i + 1})"></i>`).join("")}</span><span>11</span>`;
+  $("#pie-enlaces").innerHTML = (lang === "es" ? "Código, informe y datos: " : "Code, report and data: ")
+    + '<a href="https://github.com/Quiwitl/fly-sensory-layers">github.com/Quiwitl/fly-sensory-layers</a> · <a href="https://github.com/Quiwitl/flowlayers">flowlayers</a>';
+}
+const ICO = {
+  sol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"/><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7"/></svg>',
+  luna: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/></svg>',
+};
+// tema efectivo: el de la página (data-modo), si no el de claude.ai (data-theme), si no el del sistema
+function modoActual() {
+  const r = document.documentElement;
+  if (r.dataset.modo === "light" || r.dataset.modo === "dark") return r.dataset.modo;
+  if (r.dataset.theme === "light" || r.dataset.theme === "dark") return r.dataset.theme;
+  return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+function botonModo() {
+  const oscuro = modoActual() === "dark", b = $("#modo");
+  b.innerHTML = oscuro ? ICO.sol : ICO.luna;
+  b.setAttribute("aria-label", oscuro ? L().a_claro : L().a_oscuro);
+  b.title = b.getAttribute("aria-label");
+}
+const colorCapa = (v) => `var(--c${Math.max(1, Math.min(11, Math.round(v)))})`;
+
+let ondaFase = 0, ondaTimer = 0, ondaVisible = false;
+function motivo() {
+  // anillos que se propagan desde dos semillas con los colores de la escala de capas; los colores avanzan hacia afuera
+  const svg = $("#motivo"), W = 1600, H = 132;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let s = "";
+  for (const [cx, cy, paso] of [[260, 150, 0], [1180, -30, 3]]) {
+    for (let k = 11; k >= 1; k--) {
+      const r = 22 + k * 30;
+      s += `<circle class="onda" data-k="${k}" data-p="${paso}" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--c${((k + paso - 1) % 11) + 1})" stroke-width="22"/>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${r + 12}" fill="none" stroke="var(--beige)" stroke-width="2.5"/>`;
+    }
+    s += `<circle cx="${cx}" cy="${cy}" r="30" fill="var(--c1)"/>`;
+  }
+  svg.innerHTML = s;
+  const ondas = [...svg.querySelectorAll(".onda")];
+  const pintar = () => { for (const o of ondas) o.setAttribute("stroke", `var(--c${((+o.dataset.k + +o.dataset.p - 1 - ondaFase) % 11 + 11) % 11 + 1})`); };
+  const correr = () => {
+    clearInterval(ondaTimer);
+    if (!ondaVisible || document.hidden || sinMov()) return;
+    ondaTimer = setInterval(() => { ondaFase = (ondaFase + 1) % 11; pintar(); }, 260);
+  };
+  new IntersectionObserver((e) => { ondaVisible = e[0].isIntersecting; correr(); }).observe(svg);
+  document.addEventListener("visibilitychange", correr);
+  matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change", correr);
+}
+
+// ---------- selector
+function pills() {
+  for (const g of ["cabeza", "patas"]) {
+    const cont = $(`#pills-${g}`);
+    cont.innerHTML = "";
+    for (const [m, grupo] of MODS) {
+      if (grupo !== g) continue;
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "pill"; b.dataset.mod = m;
+      b.setAttribute("aria-pressed", String(m === mod));
+      const f = !!D.fw_superclases[m], k = !!D.banc_superclases[m];
+      b.innerHTML = `${esc(L().mods[m])}<span class="dots" aria-hidden="true">${f ? '<i class="f"></i>' : ""}${k ? '<i class="b"></i>' : ""}</span>`;
+      b.title = [f ? "FlyWire" : "", k ? "BANC" : ""].filter(Boolean).join(" + ");
+      b.addEventListener("click", () => elegir(m, true));
+      cont.appendChild(b);
+    }
+  }
+}
+
+function elegir(m, desdeClic) {
+  mod = m;
+  if (H2_MODS.includes(m)) h2mod = m;
+  scFiltro = ""; pagina = 15;
+  if (desdeClic && location.hash !== "#" + hashDe(m)) history.replaceState(null, "", "#" + hashDe(m));
+  document.querySelectorAll(".pill").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mod === m)));
+  todo(true);
+}
+
+// ---------- utilidades SVG
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const tip = $("#tip");
+function mostrarTip(html, ev) {
+  tip.innerHTML = html; tip.hidden = false;
+  const r = tip.getBoundingClientRect();
+  let x = ev.clientX + 14, y = ev.clientY + 14;
+  if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+  if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+  tip.style.left = x + "px"; tip.style.top = y + "px";
+}
+const ocultarTip = () => { tip.hidden = true; };
+
+// ---------- capa por superclase
+function filasSC(m) {
+  const filas = {};
+  for (const [src, clave] of [["fw", "fw_superclases"], ["banc", "banc_superclases"]]) {
+    for (const r of D[clave][m] || []) {
+      const id = SC[r.sc];
+      if (!id || r.n < 20) continue;
+      (filas[id] ||= { id })[src] = r;
+    }
+  }
+  return Object.values(filas).sort((a, b) => Math.min(a.fw?.med ?? 99, a.banc?.med ?? 99) - Math.min(b.fw?.med ?? 99, b.banc?.med ?? 99));
+}
+
+const sinMov = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+let animSC = 0;
+const DUR_FRENTE = 1800, curva = (p) => 0.5 - 0.5 * Math.cos(Math.PI * p);   // entra y sale suave
+function chartSC(animar = false) {
+  const cont = $("#sc-chart");
+  const filas = filasSC(mod);
+  const W = Math.max(300, cont.clientWidth), estrecho = W < 520;
+  const izq = estrecho ? 0 : 172, der = 36, arriba = 22, alto = estrecho ? 42 : 30, dy = estrecho ? 8 : 0;
+  const H = arriba + filas.length * alto + 8;
+  const x = (v) => izq + ((v - XMIN) / (XMAX - XMIN)) * (W - izq - der);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, height: H });
+  const defs = el("defs", {}, svg), clip = el("clipPath", { id: "frente-clip" }, defs);
+  const clipR = el("rect", { x: 0, y: 0, width: W, height: H }, clip);
+  for (let t = XMIN; t <= XMAX; t++) {
+    el("line", { x1: x(t), x2: x(t), y1: arriba - 4, y2: H - 4, class: "grid" }, svg);
+    const tx = el("text", { x: x(t), y: 12, "text-anchor": "middle" }, svg); tx.textContent = t;
+  }
+  if (!estrecho) { const tcap = el("text", { x: izq - 8, y: 12, "text-anchor": "end" }, svg); tcap.textContent = lang === "es" ? "capa" : "layer"; }
+  const valores = [];
+  filas.forEach((f, i) => {
+    const y0 = arriba + i * alto;
+    const g = el("g", { class: "row" + (scFiltro === f.id ? " on" : ""), tabindex: 0, role: "button" }, svg);
+    el("rect", { x: 0, y: y0, width: W, height: alto, class: "hit" }, g);
+    const lab = el("text", { x: 0, y: estrecho ? y0 + 14 : y0 + alto / 2 + 5, class: "lab" }, g); lab.textContent = L().sc[f.id];
+    const series = [["fw", "var(--fw)"], ["banc", "var(--banc)"]].filter(([s]) => f[s]);
+    const gd = el("g", { "clip-path": "url(#frente-clip)" }, g);
+    series.forEach(([s, color], j) => {
+      const r = f[s], yc = y0 + alto / 2 + dy + (series.length === 2 ? (j ? 5 : -5) : 0);
+      el("line", { x1: x(r.q10), x2: x(r.q90), y1: yc, y2: yc, stroke: color, "stroke-width": 1.5 },gd);
+      el("rect", { x: x(r.q25), y: yc - 4, width: Math.max(3, x(r.q75) - x(r.q25)), height: 8, fill: color, rx: 1 },gd);
+      el("rect", { x: x(r.med) - 1.25, y: yc - 4, width: 2.5, height: 8, fill: "var(--mediana)" },gd);
+      el("circle", { cx: x(r.med), cy: yc, r: 1.8, fill: color },gd);
+    });
+    const mv = Math.min(f.fw?.med ?? 99, f.banc?.med ?? 99);
+    const v = el("text", { x: W, y: y0 + alto / 2 + dy + 5, "text-anchor": "end" }, g); v.textContent = fmt(mv);
+    valores.push([v, mv]);
+    const info = series.map(([s]) => (s === "fw" ? "FlyWire: " : "BANC: ") + L().tip_sc(L().sc[f.id], nf(f[s].n), [f[s].q10, f[s].q25, f[s].med, f[s].q75, f[s].q90].map((q) => fmt(q))));
+    g.addEventListener("mousemove", (ev) => mostrarTip(info.join("<br>"), ev));
+    g.addEventListener("mouseleave", ocultarTip);
+    const act = () => { scFiltro = scFiltro === f.id ? "" : f.id; pagina = 15; chartSC(); tabla(); };
+    g.addEventListener("click", act);
+    g.addEventListener("keydown", (ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); act(); } });
+  });
+  cont.replaceChildren(svg);
+  cancelAnimationFrame(animSC);
+  if (animar && !sinMov()) {
+    // frente de propagación: avanza de la capa 1 a la 11 y descubre las barras a su paso
+    const frente = el("g", { class: "frente" }, svg);
+    const fl = el("line", { y1: arriba - 6, y2: H - 4, stroke: "var(--terra)", "stroke-width": 2 }, frente);
+    const fc = el("circle", { cy: arriba - 6, r: 4, fill: "var(--terra)" }, frente);
+    const dur = DUR_FRENTE, t0 = performance.now();
+    for (const [t] of valores) t.style.opacity = 0;
+    const paso = (ahora) => {
+      const p = Math.min(1, (ahora - t0) / dur), capa = XMIN + (XMAX - XMIN) * curva(p), fx = x(capa);
+      clipR.setAttribute("width", Math.max(0, fx));
+      fl.setAttribute("x1", fx); fl.setAttribute("x2", fx); fc.setAttribute("cx", fx);
+      for (const [t, mv] of valores) if (mv <= capa) t.style.opacity = 1;
+      if (p < 1) animSC = requestAnimationFrame(paso);
+      else { clipR.setAttribute("width", W); frente.remove(); for (const [t] of valores) t.style.opacity = 1; }
+    };
+    clipR.setAttribute("width", 0);
+    animSC = requestAnimationFrame(paso);
+  }
+  cont.setAttribute("aria-label", filas.map((f) => `${L().sc[f.id]} ${fmt(Math.min(f.fw?.med ?? 99, f.banc?.med ?? 99))}`).join(", "));
+}
+
+// ---------- motoneuronas
+let animMN = 0;
+function panelMN(animar = false) {
+  const filas = [];
+  const fw = D.fw_motor[mod];
+  filas.push({ id: "cerebro", lab: L().mn_cerebro, src: "FlyWire", v: fw?.med, n: fw?.n, color: "var(--fw)" });
+  for (const s of ["MN_T1", "MN_T2", "MN_T3", "MN_ala"]) {
+    const r = D.banc_mn[s];
+    filas.push({ id: s, lab: L()["mn_" + s.slice(3)], src: "BANC", v: r?.[mod], n: r?.n, color: "var(--banc)" });
+  }
+  const con = filas.filter((f) => f.v != null);
+  const mejor = con.reduce((a, b) => (b.v < a.v ? b : a), con[0]);
+  $("#mn-big").textContent = mejor ? fmt(mejor.v) : "–";
+  $("#mn-chip").style.background = mejor ? colorCapa(mejor.v) : "transparent";
+  cancelAnimationFrame(animMN);
+  if (animar && mejor && !sinMov()) {
+    // la cifra sube con el frente de la gráfica (mismo reloj y misma curva) y se detiene en su valor
+    const t0 = performance.now();
+    const paso = (ahora) => {
+      const p = Math.min(1, (ahora - t0) / DUR_FRENTE), v = Math.min(mejor.v, XMIN + (XMAX - XMIN) * curva(p));
+      $("#mn-big").textContent = fmt(v); $("#mn-chip").style.background = colorCapa(v);
+      if (v < mejor.v && p < 1) animMN = requestAnimationFrame(paso); else { $("#mn-big").textContent = fmt(mejor.v); $("#mn-chip").style.background = colorCapa(mejor.v); }
+    };
+    animMN = requestAnimationFrame(paso);
+  }
+  $("#mn-big-l").textContent = mejor ? L().mn_big(mejor.lab + " · " + mejor.src) : "";
+  const w = 112, x = (v) => 2 + ((v - XMIN) / (XMAX - XMIN)) * (w - 4);
+  $("#mn-rows").innerHTML = filas.map((f) => {
+    const svg = f.v == null ? "" : `<svg viewBox="0 0 ${w} 14" preserveAspectRatio="none" aria-hidden="true"><line x1="2" x2="${w - 2}" y1="7" y2="7" stroke="var(--hair)"/><rect x="2" y="4" width="${Math.max(1, x(f.v) - 2)}" height="6" fill="${f.color}"/></svg>`;
+    const nota = f.v == null ? (f.src === "BANC" ? L().no_banc : L().no_fw) : `${f.src} · ${L().n_mn(f.n)}`;
+    return `<div class="mnrow${f.v == null ? " na" : ""}"><span>${esc(f.lab)}<span class="n">${esc(nota)}</span></span>${svg || "<span></span>"}<span class="v">${fmt(f.v)}</span></div>`;
+  }).join("");
+  const meta = [];
+  if (D.fw_semillas[mod] != null) meta.push([L().semillas + " · FlyWire", nf(D.fw_semillas[mod])]);
+  if (D.banc_semillas[mod] != null) meta.push([L().semillas + " · BANC", nf(D.banc_semillas[mod])]);
+  if (D.h1[mod]) meta.push([L().replica, "ρ = " + D.h1[mod].rho.toFixed(3)]);
+  $("#meta").innerHTML = meta.map(([a, b]) => `<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join("");
+}
+
+// ---------- atajo de las patas
+// animación del atajo: estado global para que un redibujo a media animación siga donde iba
+let filasAt = [], atajoPendiente = true, atajoT0 = 0, animAt = 0;
+const AT_PASO = 300, AT_CARRERA = 1400, AT_DIF = 1000;
+const lim = (v) => Math.max(0, Math.min(1, v));
+function estadoAtajo(t) {
+  for (const f of filasAt) {
+    const tr = t - f.i * AT_PASO, a = f.a;
+    const cur = 1 + 7 * curva(lim(tr / AT_CARRERA));
+    const xp = f.xa(Math.min(a.pata, cur)), xc = f.xa(Math.min(a.cabeza, cur));
+    f.pata.setAttribute("cx", xp); f.cab.setAttribute("x", xc - 5);
+    f.lin.setAttribute("x1", xp); f.lin.setAttribute("x2", xc);
+    f.txt.setAttribute("x", (xp + xc) / 2); f.txt.style.opacity = cur >= a.cabeza ? 1 : 0;
+    const t2 = tr - AT_CARRERA;
+    for (const z of f.azar) z.style.opacity = lim(t2 / 300);
+    const pd = lim((t2 - 300) / (AT_DIF - 300));
+    f.dif.setAttribute("cx", f.xb(a.dif * curva(pd))); f.dif.style.opacity = t2 >= 300 ? 1 : 0;
+    if (f.ic) f.ic.style.opacity = pd >= 1 ? 1 : 0;
+  }
+}
+function animarAtajo() {
+  if (sinMov()) { atajoPendiente = false; estadoAtajo(Infinity); return; }
+  atajoPendiente = false; atajoT0 = performance.now();
+  const fin = (filasAt.length - 1) * AT_PASO + AT_CARRERA + AT_DIF;
+  const paso = (ahora) => {
+    const t = ahora - atajoT0;
+    estadoAtajo(t);
+    if (t < fin) animAt = requestAnimationFrame(paso); else estadoAtajo(Infinity);
+  };
+  cancelAnimationFrame(animAt); animAt = requestAnimationFrame(paso);
+}
+
+function chartAtajo() {
+  const cont = $("#at-chart");
+  const W = Math.max(300, cont.clientWidth), estrecho = W < 760;
+  const segs = ["MN_T1", "MN_T2", "MN_T3"];
+  const alto = estrecho ? 100 : 64, arriba = 30;
+  const H = arriba + segs.length * alto + 10;
+  const izq = estrecho ? 10 : 190;
+  const anchoA = estrecho ? W : Math.round((W - izq) * 0.55);
+  const x0 = izq, x1 = izq + anchoA - 24;
+  const xa = (v) => x0 + ((v - 1) / (8 - 1)) * (x1 - x0);
+  const b0 = estrecho ? 10 : izq + anchoA + 24, b1 = W - 16;
+  const xb = (v) => b0 + ((v + 2.5) / (3 + 2.5)) * (b1 - b0);
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, height: H });
+  const ejeA = el("text", { x: x0, y: 12 }, svg); ejeA.textContent = L().at_eje1;
+  if (!estrecho) { const ejeB = el("text", { x: b0, y: 12 }, svg); ejeB.textContent = L().at_eje2; }
+  let pasan = 0;
+  filasAt = [];
+  segs.forEach((s, i) => {
+    const a = D.atajo[s]; if (!a) return;
+    if (a.dif >= 2) pasan++;
+    const y0 = arriba + i * alto;
+    const ya = estrecho ? y0 + 34 : y0 + alto / 2 - 6;
+    el("rect", { x: 0, y: y0 - 2, width: W, height: alto - 3, class: "banda" }, svg);
+    const lab = el("text", { x: estrecho ? 10 : 16, y: estrecho ? y0 + 14 : ya + 5, class: "lab" }, svg);
+    lab.textContent = L()["mn_" + s.slice(3)];
+    for (let t = 1; t <= 8; t++) el("line", { x1: xa(t), x2: xa(t), y1: ya - 10, y2: ya + 10, class: "grid" }, svg);
+    for (const t of [1, 4, 8]) { const tt = el("text", { x: xa(t), y: ya + 24, "text-anchor": "middle" }, svg); tt.textContent = t; }
+    const lin = el("line", { x1: xa(a.pata), x2: xa(a.cabeza), y1: ya, y2: ya, stroke: "var(--ink)", "stroke-width": 2 }, svg);
+    const cab = el("rect", { x: xa(a.cabeza) - 5, y: ya - 5, width: 10, height: 10, fill: "var(--ink)" }, svg);
+    const pata = el("circle", { cx: xa(a.pata), cy: ya, r: 7, fill: "var(--pata)", stroke: "var(--ink)", "stroke-width": 1.5 }, svg);
+    const td = el("text", { x: (xa(a.pata) + xa(a.cabeza)) / 2, y: ya - 10, "text-anchor": "middle" }, svg);
+    td.textContent = `${fmt(a.dif, 2)} ${L().at_dif}`;
+    td.setAttribute("fill", "var(--ink)");
+    const yb = estrecho ? y0 + 70 : ya;
+    for (let t = -2; t <= 3; t++) el("line", { x1: xb(t), x2: xb(t), y1: yb - 8, y2: yb + 8, class: "grid" }, svg);
+    if (estrecho || i === segs.length - 1) for (const t of [-2, 0, 2]) { const tt = el("text", { x: xb(t), y: yb + 22, "text-anchor": "middle" }, svg); tt.textContent = t; }
+    el("line", { x1: xb(0), x2: xb(0), y1: yb - 10, y2: yb + 10, stroke: "var(--muted)" }, svg);
+    el("line", { x1: xb(2), x2: xb(2), y1: yb - 12, y2: yb + 12, stroke: "var(--ink)", "stroke-dasharray": "3 2" }, svg);
+    const azar = a.azar.map((z) => el("circle", { cx: xb(z), cy: yb, r: 3.5, fill: "none", stroke: "var(--azar)", "stroke-width": 1.5 }, svg));
+    const ic = a.ic95 && a.ic95[0] != null ? el("line", { x1: xb(a.ic95[0]), x2: xb(a.ic95[1]), y1: yb, y2: yb, stroke: "var(--pata)", "stroke-width": 2 }, svg) : null;
+    const dif = el("circle", { cx: xb(a.dif), cy: yb, r: 7, fill: "var(--pata)", stroke: "var(--ink)", "stroke-width": 1.5 }, svg);
+    filasAt.push({ i, a, xa, xb, lin, cab, pata, txt: td, azar, dif, ic });
+    const hit = el("rect", { x: 0, y: y0, width: W, height: alto, fill: "transparent" }, svg);
+    hit.addEventListener("mousemove", (ev) => mostrarTip(
+      `<b>${esc(L()["mn_" + s.slice(3)])}</b><br><span class="m">${L().at_pata} ${fmt(a.pata, 2)} · ${L().at_cabeza} ${fmt(a.cabeza, 2)}<br>${lang === "es" ? "diferencia" : "difference"} ${fmt(a.dif, 2)} (IC95 ${fmt(a.ic95[0], 2)}–${fmt(a.ic95[1], 2)})<br>${L().at_azar}: ${fmt(Math.min(...a.azar), 2)} … ${fmt(Math.max(...a.azar), 2)}</span>`, ev));
+    hit.addEventListener("mouseleave", ocultarTip);
+  });
+  cont.replaceChildren(svg);
+  // antes de verse queda en la salida; si la animación va a media, sigue desde donde iba
+  if (atajoPendiente && !sinMov()) estadoAtajo(0);
+  else if (atajoT0 && performance.now() - atajoT0 < 4000) estadoAtajo(performance.now() - atajoT0);
+  const leyenda = document.createElement("div");
+  leyenda.className = "leyenda"; leyenda.style.justifyContent = "center"; leyenda.style.marginTop = "14px";
+  leyenda.innerHTML = `<span><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="var(--pata)" stroke="var(--ink)" stroke-width="1.5"/></svg>${L().at_pata}</span>`
+    + `<span><svg viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" fill="var(--ink)"/></svg>${L().at_cabeza}</span>`
+    + `<span><svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="4" fill="none" stroke="var(--azar)" stroke-width="1.5"/></svg>${L().at_azar}</span>`
+    + `<span><svg viewBox="0 0 12 12" aria-hidden="true"><line x1="6" x2="6" y1="0" y2="12" stroke="var(--ink)" stroke-dasharray="3 2"/></svg>${L().at_crit}</span>`;
+  cont.appendChild(leyenda);
+  cont.setAttribute("aria-label", segs.map((s) => `${L()["mn_" + s.slice(3)]}: ${fmt(D.atajo[s].dif, 2)}`).join(", "));
+  const nombres = segs.filter((s) => D.atajo[s].dif >= 2).map((s) => L()["mn_" + s.slice(3)]);
+  $("#at-verdict").textContent = L().at_verdict(pasan === 3, nombres.length ? nombres.join(", ") : (lang === "es" ? "ninguna" : "none"));
+}
+
+// ---------- dos moscas
+let puntos = [];
+function scatter() {
+  const m = H2_MODS.includes(mod) ? mod : h2mod;
+  $("#dos-pills").innerHTML = H2_MODS.map((k) => `<button type="button" data-h2="${k}" aria-pressed="${k === m}">${esc(L().mods[k])}</button>`).join("");
+  $("#dos-pills").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => { h2mod = b.dataset.h2; if (H2_MODS.includes(mod)) elegir(h2mod, true); else scatter(); }));
+  const cv = $("#dos-canvas"), wrap = cv.parentElement;
+  const S = wrap.clientWidth, dpr = window.devicePixelRatio || 1;
+  cv.width = S * dpr; cv.height = S * dpr;
+  const c = cv.getContext("2d"); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const css = getComputedStyle(document.documentElement);
+  const col = (v) => css.getPropertyValue(v).trim();
+  const pad = 40, lo = 1, hi = 11;
+  const sx = (v) => pad + ((v - lo) / (hi - lo)) * (S - pad - 10);
+  const sy = (v) => S - pad - ((v - lo) / (hi - lo)) * (S - pad - 10);
+  c.clearRect(0, 0, S, S);
+  c.strokeStyle = col("--hair"); c.lineWidth = 1;
+  c.font = `500 12.8px ${col("--en")}`; c.fillStyle = col("--muted");
+  for (let t = 1; t <= 11; t += 2) {
+    c.beginPath(); c.moveTo(sx(t), sy(lo)); c.lineTo(sx(t), sy(hi)); c.stroke();
+    c.beginPath(); c.moveTo(sx(lo), sy(t)); c.lineTo(sx(hi), sy(t)); c.stroke();
+    c.textAlign = "center"; c.fillText(t, sx(t), S - pad + 16);
+    c.textAlign = "right"; c.fillText(t, pad - 6, sy(t) + 4);
+  }
+  c.strokeStyle = col("--muted"); c.setLineDash([3, 3]);
+  c.beginPath(); c.moveTo(sx(lo), sy(lo)); c.lineTo(sx(hi), sy(hi)); c.stroke(); c.setLineDash([]);
+  c.font = `500 14px ${col("--jp")}`; c.fillStyle = col("--ink"); c.textAlign = "center";
+  c.fillText(L().eje_fw, sx(6), S - 6);
+  c.save(); c.translate(12, sy(6)); c.rotate(-Math.PI / 2); c.fillText(L().eje_banc, 0, 0); c.restore();
+  const X = D.h2.fw[m], Y = D.h2.banc[m];
+  puntos = [];
+  c.fillStyle = col("--terra"); c.globalAlpha = 0.5;
+  for (let i = 0; i < X.length; i++) {
+    if (X[i] == null || Y[i] == null) continue;
+    const px = sx(X[i] / 100), py = sy(Y[i] / 100);
+    puntos.push([px, py, i]);
+    c.fillRect(px - 1.5, py - 1.5, 3, 3);
+  }
+  c.globalAlpha = 1;
+  $("#dos-rho").textContent = D.h2.rho[m].toFixed(2);
+  $("#dos-desc").textContent = L().dos_desc(L().modlargo[m], puntos.length);
+  $("#dos-nota").textContent = H2_MODS.includes(mod) || !D.fw_superclases[mod] ? L().dos_nota : L().dos_nota_fw(L().mods[mod]);
+  cv.setAttribute("aria-label", `${L().rho_l}: ${D.h2.rho[m].toFixed(3)}`);
+  cv.onmousemove = (ev) => {
+    const r = cv.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
+    let best = null, bd = 64;
+    for (const p of puntos) { const d = (p[0] - mx) ** 2 + (p[1] - my) ** 2; if (d < bd) { bd = d; best = p; } }
+    const t = $("#dos-tip");
+    if (!best) { t.hidden = true; return; }
+    const i = best[2];
+    t.innerHTML = `<b>${esc(D.h2.tipos[i])}</b><br><span class="m">FlyWire ${fmt(X[i] / 100, 2)} · BANC ${fmt(Y[i] / 100, 2)}</span>`;
+    t.hidden = false;
+    t.style.left = Math.min(best[0] + 10, S - 150) + "px"; t.style.top = Math.max(best[1] - 44, 0) + "px";
+  };
+  cv.onmouseleave = () => { $("#dos-tip").hidden = true; };
+}
+
+// ---------- tipos celulares
+function filasTipos() {
+  const usarFw = !!D.fw_tipos.L10[mod];
+  const fuente = usarFw ? D.fw_tipos : D.banc_tipos;
+  const Lv = fuente.L10[mod];
+  let bancPorTipo = null;
+  if (usarFw && H2_MODS.includes(mod)) {
+    bancPorTipo = new Map();
+    D.h2.tipos.forEach((t, i) => { if (D.h2.banc[mod][i] != null) bancPorTipo.set(t, D.h2.banc[mod][i] / 100); });
+  }
+  const out = [];
+  for (let i = 0; i < fuente.nombres.length; i++) {
+    if (Lv[i] == null) continue;
+    out.push({ t: fuente.nombres[i], sc: SC[fuente.sc[i]] || "", n: fuente.n[i], v: Lv[i] / 10, b: bancPorTipo ? bancPorTipo.get(fuente.nombres[i]) : undefined });
+  }
+  out.sort((a, b) => a.v - b.v);
+  return { out, usarFw, conBanc: !!bancPorTipo };
+}
+
+function tabla() {
+  const { out, usarFw, conBanc } = filasTipos();
+  const sel = $("#fsc");
+  const presentes = [...new Set(out.map((r) => r.sc).filter(Boolean))];
+  sel.innerHTML = `<option value="">${esc(L().todas_sc)}</option>` + presentes.map((s) => `<option value="${s}">${esc(L().sc[s])}</option>`).join("");
+  sel.value = presentes.includes(scFiltro) ? scFiltro : "";
+  const q = $("#q").value.trim().toLowerCase();
+  const f = out.filter((r) => (!sel.value || r.sc === sel.value) && (!q || r.t.toLowerCase().includes(q)));
+  const vis = f.slice(0, pagina);
+  const col1 = usarFw ? L().th_fw : L().th_banc;
+  $("#tabla thead").innerHTML = `<tr><th>${L().th_tipo}</th><th>${L().th_sc}</th><th class="num">${L().th_n}</th><th class="num">${col1}</th>${conBanc ? `<th class="num">${L().th_banc}</th>` : ""}<th><span class="vh">${lang === "es" ? "capa" : "layer"}</span></th></tr>`;
+  const w = 200, x = (v) => ((v - XMIN) / (XMAX - XMIN)) * w;
+  const c1 = usarFw ? "var(--fw)" : "var(--banc)";
+  $("#tabla tbody").innerHTML = vis.map((r) => `<tr><td>${esc(r.t)}</td><td>${esc(L().sc[r.sc] || "–")}</td><td class="num">${nf(r.n)}</td><td class="num"><span class="cap"><i style="background:${colorCapa(r.v)}"></i>${fmt(r.v)}</span></td>${conBanc ? `<td class="num">${r.b == null ? "–" : `<span class="cap"><i style="background:${colorCapa(r.b)}"></i>${fmt(r.b)}</span>`}</td>` : ""}`
+    + `<td class="barra"><svg viewBox="0 0 ${w} 12" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${w}" y1="6" y2="6" stroke="var(--hair)"/><rect x="0" y="${conBanc ? 1 : 3}" width="${Math.max(1, x(r.v))}" height="${conBanc ? 4 : 6}" fill="${c1}"/>${conBanc && r.b != null ? `<rect x="0" y="7" width="${Math.max(1, x(r.b))}" height="4" fill="var(--banc)"/>` : ""}</svg></td></tr>`).join("");
+  $("#mas").hidden = f.length <= pagina;
+  $("#cuenta").textContent = L().cuenta(vis.length, f.length);
+}
+
+// ---------- todo
+function todo(animar = false) {
+  chartSC(animar); panelMN(animar); chartAtajo(); scatter(); tabla();
+}
+
+async function inicio() {
+  const pref = leer("capas-lang");
+  lang = pref === "en" || pref === "es" ? pref : ((navigator.language || "es").toLowerCase().startsWith("es") ? "es" : "en");
+  textos();
+  try {
+    const r = await fetch("data.json");
+    if (!r.ok) throw new Error(r.status);
+    D = await r.json();
+  } catch (e) {
+    $("#main").innerHTML = `<p class="nota" role="alert">${esc(L().error)}</p>`;
+    return;
+  }
+  mod = modDeHash(location.hash) || "olfativas";
+  if (H2_MODS.includes(mod)) h2mod = mod;
+  pills(); todo(true); motivo();
+  new IntersectionObserver((e, obs) => { if (e[0].isIntersecting && atajoPendiente) { obs.disconnect(); animarAtajo(); } },
+    { rootMargin: "0px 0px -20% 0px" }).observe($("#at-chart"));
+  $("#main").setAttribute("aria-busy", "false");
+  $("#modo").addEventListener("click", () => {
+    const nuevo = modoActual() === "dark" ? "light" : "dark";
+    document.documentElement.dataset.modo = nuevo; guardar("capas-modo", nuevo); botonModo();
+  });
+  $("#lang").addEventListener("click", () => {
+    lang = lang === "es" ? "en" : "es"; guardar("capas-lang", lang); textos(); pills(); todo(); $("#lang").focus();
+  });
+  $("#q").addEventListener("input", () => { pagina = 15; tabla(); });
+  $("#fsc").addEventListener("change", () => { scFiltro = $("#fsc").value; pagina = 15; chartSC(); tabla(); });
+  $("#mas").addEventListener("click", () => { pagina += 40; tabla(); });
+  addEventListener("hashchange", () => { const m = modDeHash(location.hash); if (m && m !== mod) elegir(m, false); });
+  let rt = 0, ancho = $("#main").clientWidth;
+  new ResizeObserver(() => {
+    const w = $("#main").clientWidth;
+    if (w === ancho) return;
+    ancho = w; cancelAnimationFrame(rt); rt = requestAnimationFrame(() => { chartSC(); chartAtajo(); scatter(); });
+  }).observe($("#main"));
+  const alCambiarTema = () => { scatter(); botonModo(); };
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", alCambiarTema);
+  new MutationObserver(alCambiarTema).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-modo"] });
+}
+inicio();
+
+</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Zen+Kaku+Gothic+New:wght@500;700&display=swap">
+</body>
+</html>

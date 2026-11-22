@@ -11,6 +11,8 @@ How many synaptic steps does it take for each sensory modality to reach each neu
 
 **Full report** (10 pages): [English](reporte/report-final-en.pdf) · [Spanish](reporte/informe-final.pdf), with their LaTeX sources in `reporte/`.
 
+**Interactive explorer:** https://quiwitl.github.io/fly-sensory-layers/explorer/ — pick a sensory input and see at which layer it reaches each super class, cell type and group of motor neurons, the leg shortcut against the random graphs, and FlyWire against BANC by cell type (English and Spanish). Its data are a summary of the results below, made by `07_explorador_datos.py`.
+
 ![Own layers vs. published layers](figuras/03_propio_vs_publicado_completo_p15_u1.png)
 
 ## 1. Replication of the published layers (FlyWire v783)
