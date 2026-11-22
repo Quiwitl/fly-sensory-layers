@@ -9,7 +9,7 @@ How many synaptic steps does it take for each sensory modality to reach each neu
 3. **Legs.** In the full central nervous system, each leg's mechanosensory neurons reach that leg's motor neurons 1.5–2.1 steps sooner than the closest head modality, about 3 steps beyond what 10 degree-preserving random graphs give. The pre-registered threshold (≥ 2 steps in all three legs) is met only by the hind leg, so the hypothesis is **not** confirmed as stated.
 4. **Sensitivity.** The 5-synapse threshold changes the layers (ρ ≈ 0.88); the step cap (15 vs. 30) does not.
 
-**Full report** (Spanish, 10 pages): [`reporte/informe-final.pdf`](reporte/informe-final.pdf), with its LaTeX source.
+**Full report** (10 pages): [English](reporte/report-final-en.pdf) · [Spanish](reporte/informe-final.pdf), with their LaTeX sources in `reporte/`.
 
 ![Own layers vs. published layers](figuras/03_propio_vs_publicado_completo_p15_u1.png)
 
